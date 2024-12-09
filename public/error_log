@@ -1,0 +1,1 @@
+[19-Nov-2024 19:11:40 Asia/Riyadh] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in /home/bbtravel/public_html/vendor/laravel/framework/src/Illuminate/Database/Connectors/ConnectionFactory.php on line 30
