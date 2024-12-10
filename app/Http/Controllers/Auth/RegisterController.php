@@ -41,36 +41,50 @@ class RegisterController extends Controller
         $this->middleware('guest');
     }
 
+    protected function validator(array $data)
+    {
+        return Validator::make($data, [
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'phone' => ['required', 'numeric', 'digits:10', 'unique:users,phone_number'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ]);
+    }
+
     /**
      * Create a new user instance after a valid registration.
      *
      * @param  array  $data
      * @return \App\Models\User
      */
-    protected function createUser(Request $request)
+    protected function create(array $data)
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
-            'phone' => ['required', 'numeric', 'digits:10', 'unique:users,phone_number'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-        ]);
-
-        $user =  User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'phone_number' => $request->phone,
+        $user = User::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'phone_number' => $data['phone'],
             'Status' => 'مفعل',
             'roles_name' => 'user',
-            'password' => Hash::make($request->password),
+            'password' => Hash::make($data['password']),
         ]);
 
-        $user->assignRole('user');
+        $user->assignRole('user'); // تعيين الدور للمستخدم الجديد
 
-        // تسجيل الدخول مباشرة بعد التسجيل (اختياري)
+        return $user; // إعادة المستخدم المُنشأ
+    }
+
+    protected function register(Request $request)
+    {
+        // التحقق من صحة البيانات
+        $this->validator($request->all())->validate();
+
+        // إنشاء المستخدم
+        $user = $this->create($request->all());
+
+        // تسجيل الدخول
         auth()->login($user);
 
-        // إعادة توجيه المستخدم إلى الصفحة الرئيسية أو أي صفحة أخرى
+        // إعادة التوجيه
         return redirect()->route('Clients.create')->with('login', 'تم التسجيل بنجاح!');
     }
 }

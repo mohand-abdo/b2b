@@ -132,7 +132,7 @@
                                             <a class=" btn btn-outline-info btn-sm"  href="{{ asset('image/file/'.$file->file) }}"  data-lightbox="gallery" title="عرض الصورة">
                                                 <i class="fa fa-eye"></i>
                                             </a>
-                                            <a href="{{ asset('image/file/' . $file->file) }}" class=" btn btn-outline-primary btn-sm" title="تنزيل الصورة"  download >
+                                            <a href="{{ asset('image/file/' . $file->file) }}" data-lightbox="{{ $file->name }}" data-title="{{ $file->name }}" class=" btn btn-outline-primary btn-sm" title="تنزيل الصورة"  download >
                                         <i class="fas fa-download"></i>
                                     </a>
                                             {{-- @endcan --}}
