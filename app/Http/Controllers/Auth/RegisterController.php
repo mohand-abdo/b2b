@@ -55,7 +55,7 @@ class RegisterController extends Controller
             'phone' => ['required', 'numeric', 'digits:10', 'unique:users,phone_number'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
-        
+
         $user =  User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -71,6 +71,6 @@ class RegisterController extends Controller
         auth()->login($user);
 
         // إعادة توجيه المستخدم إلى الصفحة الرئيسية أو أي صفحة أخرى
-        return redirect()->route('home')->with('success', 'تم التسجيل بنجاح!');
+        return redirect()->route('Clients.create')->with('login', 'تم التسجيل بنجاح!');
     }
 }

@@ -23,9 +23,9 @@ class ClientsController extends Controller
         $user = auth()->user();
         $tree4s = Tree4::where('tree3_code', 1205)->where('status', 1)->get();
 
-        if ($user->roles_name == [0]) {
+        if ($user->roles_name == 'owner') {
             $tree4s = $tree4s->get(); // عرض جميع البيانات
-        } elseif ($user->roles_name == ['agent']) {
+        } elseif ($user->roles_name == 'agent') {
             $tree4s = $tree4s->where('user_id', $user->id)->get(); // عرض البيانات التي أضافها المستخدم فقط
         }
 
@@ -40,9 +40,9 @@ class ClientsController extends Controller
         $user = auth()->user();
         $tree4s = Tree4::where('tree3_code', 1205)->where('status', 0);
 
-        if ($user->roles_name == ['owner']) {
+        if ($user->roles_name == 'owner') {
             $tree4s = $tree4s->get(); // عرض جميع البيانات
-        } elseif ($user->roles_name == ['agent']) {
+        } elseif ($user->roles_name == 'agent') {
             $tree4s = $tree4s->where('user_id', $user->id)->get(); // عرض البيانات التي أضافها المستخدم فقط
         }
 

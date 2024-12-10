@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\RegisterController;
+use GuzzleHttp\Middleware;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
@@ -21,11 +22,12 @@ Route::get('/', function () {
 });
 
 Auth::routes();
-Route::post('/register', [RegisterController::class, 'createUser'])->name('register');
+// Route::post('/register', [RegisterController::class, 'createUser'])->name('register');
 
 //Auth::routes(['register'=>false]);
 //  route auth
-Route::middleware(['auth'])->group(function () {
+
+Route::group([ 'middleware' => ['auth']], function () {
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
     // الراوتات الخاصة بنظام العمرة
@@ -101,10 +103,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('Driver_statement', [App\Http\Controllers\DriversController::class, 'show'])->name('Driver_statement.show');
     // route client
     Route::resource('Clients', App\Http\Controllers\ClientsController::class);
-    Route::get('Clients_inactive', [App\Http\Controllers\ClientsController::class,'inactive'])->name('Clients.inactive');
-    Route::post('Clients_add', [App\Http\Controllers\ClientsController::class,'add'])->name('Clients.add');
-    Route::get('Clients_pic', [App\Http\Controllers\ClientsController::class,'show_pic'])->name('Clients.pic');
-    Route::post('Clients/toggle-status/{id}', [App\Http\Controllers\ClientsController::class,'toggleStatus'])->name('Clients.toggleStatus');
+    Route::get('Clients_inactive', [App\Http\Controllers\ClientsController::class, 'inactive'])->name('Clients.inactive');
+    Route::post('Clients_add', [App\Http\Controllers\ClientsController::class, 'add'])->name('Clients.add');
+    Route::get('Clients_pic', [App\Http\Controllers\ClientsController::class, 'show_pic'])->name('Clients.pic');
+    Route::post('Clients/toggle-status/{id}', [App\Http\Controllers\ClientsController::class, 'toggleStatus'])->name('Clients.toggleStatus');
     // route client payment
     Route::resource('ClientPay', App\Http\Controllers\ClientPayController::class);
     Route::get('client-print/{id}', [App\Http\Controllers\ClientPayController::class, 'show'])->name('client-print');
@@ -113,12 +115,11 @@ Route::middleware(['auth'])->group(function () {
     Route::post('client_statement', [App\Http\Controllers\ClientsController::class, 'show'])->name('client_statement.show');
     Route::get('client_myStatement', [App\Http\Controllers\ClientsController::class, 'my_statment'])->name('client_myStatement');
     // end route client
-    
-        Route::post('add_file', [App\Http\Controllers\FileController::class, 'store'])->name('add_file');
+
+    Route::post('add_file', [App\Http\Controllers\FileController::class, 'store'])->name('add_file');
     Route::get('file/{id}', [App\Http\Controllers\FileController::class, 'show'])->name('file.show');
     Route::put('file', [App\Http\Controllers\FileController::class, 'update'])->name('file.update');
-    Route::post('file_delete', [App\Http\Controllers\FileController::class,'destroy'])->name('file.destroy');
-    
+    Route::post('file_delete', [App\Http\Controllers\FileController::class, 'destroy'])->name('file.destroy');
 
     //إضافة سائق في شاشة  عقودات النقل  إدارة النقل
     Route::post('Transport_driver_add_contract', [App\Http\Controllers\ContractController::class, 'transport_driver_add_contract'])->name('Transport_driver_add_contract');

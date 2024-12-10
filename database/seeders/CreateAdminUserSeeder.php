@@ -15,11 +15,11 @@ class CreateAdminUserSeeder extends Seeder
     {
         // إنشاء المستخدم
         $user = User::create([
-            'name' => 'MOHAMED ALGAMAR',
+            'name' => 'مهند عبد الوهاب',
             'email' => 'admin@gmail.com',
             'phone_number' => '0121496141',
             'password' => bcrypt('123456789'),
-            'roles_name' => ['owner'],
+            'roles_name' => 'owner',
             'Status' => 'مفعل',
         ]);
 

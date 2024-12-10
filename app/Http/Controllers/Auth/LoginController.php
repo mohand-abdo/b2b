@@ -49,14 +49,17 @@ class LoginController extends Controller
     }
 
      // Redirect users based on their roles
-     protected function redirectTo()
+     protected function authenticated(Request $request, $user)
      {
-         $user = auth()->user();
- 
-         if ($user->roles_name == ["agent"]) {
-             return route('Clients.index'); // توجيه إلى صفحة العملاء
+         if ($user->roles_name == "agent") {
+             return to_route('Clients.index'); // توجيه إلى صفحة العملاء
+         }
+        elseif($user->roles_name == "user") {
+             return to_route('Clients.create'); // توجيه إلى صفحة المستخدم
+         }else{
+            return to_route('home'); // توجيه إلى صفحة الادمن
          }
  
-         return $this->redirectTo; // توجيه إلى الصفحة الرئيسية
+        //  return to_route('home'); // توجيه إلى الصفحة الرئيسية
      }
 }
