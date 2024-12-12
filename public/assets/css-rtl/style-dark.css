@@ -1344,7 +1344,7 @@ body.dark-theme {
   border: 1px solid rgba(221, 230, 241, 0.1); }
 
 .mCSB_scrollTools .mCSB_dragger .mCSB_dragger_bar {
-  width: 2px; }
+  width: 5px; }
 
 .dark-theme .mCS-minimal.mCSB_scrollTools .mCSB_dragger .mCSB_dragger_bar {
   background-color: #3b4563 !important; }

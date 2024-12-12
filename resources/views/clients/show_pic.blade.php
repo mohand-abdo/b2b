@@ -110,8 +110,10 @@
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td class="text-center">
+                                            <a href="{{ asset('image/file/'.$file->file) }}" data-lightbox="{{ $file->name }}" data-title="{{ $file->name }}" >
                                             <img src="{{ asset('image/file/' . $file->file) }}" alt="صورة مصغرة"
                                                 width="100">
+                                            </a>
                                         </td>
                                         <td>{{ $file->name }}</td>
                                         <td>{{ $file->created_at }}</td>
@@ -129,10 +131,10 @@
                                                 <i class="fa fa-trash"></i>
                                             </a>
                                             {{-- @can('إضافة مرفقات') --}}
-                                            <a class=" btn btn-outline-info btn-sm"  href="{{ asset('image/file/'.$file->file) }}"  data-lightbox="gallery" title="عرض الصورة">
+                                            <a class=" btn btn-outline-info btn-sm"  href="{{ asset('image/file/'.$file->file) }}" data-lightbox="{{ $file->name }}" data-title="{{ $file->name }}" >
                                                 <i class="fa fa-eye"></i>
                                             </a>
-                                            <a href="{{ asset('image/file/' . $file->file) }}" data-lightbox="{{ $file->name }}" data-title="{{ $file->name }}" class=" btn btn-outline-primary btn-sm" title="تنزيل الصورة"  download >
+                                            <a href="{{ asset('image/file/' . $file->file) }}"  class=" btn btn-outline-primary btn-sm" title="تنزيل الصورة"  download >
                                         <i class="fas fa-download"></i>
                                     </a>
                                             {{-- @endcan --}}
@@ -185,7 +187,20 @@
                     enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
+                        @if (Auth::user()->roles_name == 'user')
                         <input type="hidden" name="tree4_id" id="id" value="{{ $tree4Id }}">
+                            
+                        @elseif (Auth::user()->roles_name == 'agent')
+                            <div class="form-group">
+                                <label for="tree4_id">الحاج / المعتمر</label>
+                                <select name="tree4_id" class="form-control" required>
+                                    <option value="">-- اختر الحاج / المعتمر --</option>
+                                    @foreach ($tree4Id as $tree4)
+                                        <option value="{{ $tree4->id }}">{{ $tree4->tree4_name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        @endif
 
                         {{-- file_name --}}
                         <div class="form-group">

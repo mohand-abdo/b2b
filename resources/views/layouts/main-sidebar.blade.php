@@ -82,16 +82,19 @@
                         </svg><span class="side-menu__label"> الحجاج / المعتمرين</span><i class="angle fe fe-chevron-down"></i></a>
                     <ul class="slide-menu">
                         @can('قائمة الحجاج')
-                            <li><a class="slide-item" href="{{ url('/' . ($page = 'Clients')) }}">قائمة الحجاج / المتمرين </a></li>
+                            <li><a class="slide-item" href="{{ url('/' . ($page = 'Clients')) }}">قائمة الحجاج / المعتمرين </a></li>
                         @endcan
                         @can('قائمة الحجاج غير المفعلين')
-                            <li><a class="slide-item" href="{{ url('/' . ($page = 'Clients_inactive')) }}">قائمة الحجاج / المتمرين غير المفعلين </a></li>
+                            <li><a class="slide-item" href="{{ url('/' . ($page = 'Clients_inactive')) }}">قائمة الحجاج / المعتمرين غير المفعلين </a></li>
                         @endcan
                         @can('دفعيات الحجاج')
                             <li><a class="slide-item" href="{{ url('/' . ($page = 'ClientPay')) }}">الدفعيات   </a></li>
                         @endcan
                         @can('كشف حساب حاج')
                             <li><a class="slide-item" href="{{ url('/' . ($page = 'client_statement')) }}">كشف حساب  </a>
+                            </li>
+
+                            <li><a class="slide-item" href="{{ url('/' . ($page = 'campaign_statement')) }}">كشف حساب بواسطة الحملات  </a>
                             </li>
                         @endcan
                     </ul>
@@ -242,6 +245,12 @@
                         @can('صلاحيات المستخدمين')
                             <li><a class="slide-item" href="{{ url('/' . ($page = 'roles')) }}">صلاحيات المستخدمين </a></li>
                         @endcan
+                        @can('ادارة الوكلاء')
+                            <li><a class="slide-item" href="{{ route('agent.index') }}">قائمة الوكلاء</a></li>
+                        @endcan
+                        @can('اضافة وكيل')
+                            <li><a class="slide-item" href="{{ url('/' . ($page = 'agent/create')) }}">اضافة وكيل </a></li>
+                        @endcan
                     </ul>
                 </li>
             @endcan
@@ -267,22 +276,36 @@
             @endcan
             @can('اضافة حاج ل بياناته')
                 <li class="slide">
-                    <a class="side-menu__item" href="{{ url('/' . ($page = 'Clients/create')) }}">
-                        <span class="side-menu__label">اضافة البيانات</span>
+                    <a class="side-menu__item" href="{{ url('/' . ($page = 'Clients/create')) }}"><svg
+                            xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" viewBox="0 0 24 24"
+                            fill="currentColor">
+                            <path
+                                d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5s-3 1.34-3 3 1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />
+                        </svg><span class="side-menu__label">اضافة البيانات</span>
                     </a>
                 </li>
             @endcan
             @can('اضافة مرفق')
                 <li class="slide">
-                    <a class="side-menu__item" href="{{ url('/' . ($page = 'Clients_pic')) }}">
-                        <span class="side-menu__label"> المرفقات</span>
+                    <a class="side-menu__item" href="{{ url('/' . ($page = 'Clients_pic')) }}"><svg
+                            xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" viewBox="0 0 24 24">
+                            <path d="M0 0h24v24H0V0z" fill="none" />
+                            <path d="M5 5h15v3H5zm12 5h3v9h-3zm-7 0h5v9h-5zm-5 0h3v9H5z" opacity=".3" />
+                            <path
+                                d="M20 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h15c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM8 19H5v-9h3v9zm7 0h-5v-9h5v9zm5 0h-3v-9h3v9zm0-11H5V5h15v3z" />
+                        </svg><span class="side-menu__label"> المرفقات</span>
                     </a>
                 </li>
             @endcan
             @can('كشف حساب عميل')
                 <li class="slide">
-                    <a class="side-menu__item" href="{{ url('/' . ($page = 'client_myStatement')) }}">
-                        <span class="side-menu__label"> كشف حساب</span>
+                    <a class="side-menu__item" href="{{ url('/' . ($page = 'client_myStatement')) }}"><svg
+                            xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" viewBox="0 0 24 24">
+                            <path d="M0 0h24v24H0V0z" fill="none" />
+                            <path d="M15 11V4H4v8.17l.59-.58.58-.59H6z" opacity=".3" />
+                            <path
+                                d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-5 7c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10zM4.59 11.59l-.59.58V4h11v7H5.17l-.58.59z" />
+                        </svg><span class="side-menu__label">كشف حساب</span>
                     </a>
                 </li>
             @endcan

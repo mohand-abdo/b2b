@@ -24,6 +24,7 @@ return new class extends Migration
             $table->bigInteger('invoice_number')->nullable();
             $table->bigInteger('sales_car_number')->nullable();
             $table->bigInteger('transport_number')->nullable();
+            $table->foreignId('pluse_id')->nullable()->constrained()->cascadeOnDelete(); //
             $table->string('type'); //نوع القيد
              $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade'); //المستخدم
             $table->timestamps();

@@ -2,50 +2,38 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Campaigns;
 use App\Models\Stages;
+use App\Models\Campaigns;
+use App\Models\Operation;
+use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\RedirectResponse;
 
 class StagesController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function index(): View
     {
-        $stages = Stages::all();
-        $campaigns = Campaigns::where('status',1)->get();
+        if (Auth::user()->roles_name == 'owner') {
+            $stages = Stages::get();
+        } elseif (Auth::user()->roles_name == 'agent') {
+            $stages = Stages::where('user_id', Auth::id())->get();
+        }
+
+        $campaigns = Campaigns::where('status', 1)->get();
 
         return view('stages.index', compact('campaigns', 'stages'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $request->validate([
             'campaign_id' => 'required|string|max:255',
             'stage' => 'required',
         ]);
         $exists = Stages::where('campaign_id', $request->campaign_id)
-                        ->where('stage', $request->stage)
-                        ->exists();
+            ->where('stage', $request->stage)
+            ->exists();
 
         if ($exists) {
             return redirect()->back()->with('error', 'المرحلة موجودة بالفعل لهذه الحملة.');
@@ -58,32 +46,7 @@ class StagesController extends Controller
         return redirect()->route('Stages.index')->with('success', 'تم إضافة المرحلة بنجاح');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Stages $stages)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Stages $stages)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id): RedirectResponse
     {
         $request->validate([
             'campaign_id' => 'required|string|max:255',
@@ -101,17 +64,52 @@ class StagesController extends Controller
         return redirect()->route('Stages.index')->with('edit', 'تم تحديث المرحلة بنجاح');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Request $request)
+    public function destroy(Request $request): RedirectResponse
     {
+        $request->validate(
+            rules: [
+                'id' => ['required', 'exists:stages,id'],
+                [
+                    'id.required' => 'معرف المرحلة مطلوب.',
+                    'id.exists' => 'المرحلة المحددة غير موجودة.',
+                ],
+            ],
+        );
         $id = $request->id;
         Stages::find($id)->delete();
         session()->flash('delete');
 
         return redirect()->route('Stages.index')->with('success', 'تم حذف المرحلة بنجاح');
+    }
+
+    public function search(): View
+    {
+        $campaigns = Campaigns::where('status', 1)->get();
+        return view('stages.search', compact('campaigns'));
+    }
+
+    public function search_post(Request $request): View
+    {
+        $start = $request->start;
+        $end = $request->end;
+        $Madin = Operation::with('plus')->whereHas('plus', callback: function ($query) use ($request) {
+            $query->where('campaign_id', $request->campaign); // الشرط بناءً على campaign_id
+        })
+            ->whereDate('created_at', '>=', $request->start)
+            ->whereDate('created_at', '<=', $request->end)
+            ->orderBy('id', 'DESC')
+            ->where('Madin', 'like', '1205%')
+            ->get();
+
+            $Dain = Operation::with('plus')->whereHas('plus', callback: function ($query) use ($request) {
+            $query->where('campaign_id', $request->campaign); // الشرط بناءً على campaign_id
+        })
+            ->whereDate('created_at', '>=', $request->start)
+            ->whereDate('created_at', '<=', $request->end)
+            ->orderBy('id', 'DESC')
+            ->where('Dain', 'like', '1205%')
+            ->get();
+
+        return view('stages.show', compact('Madin','Dain', 'start', 'end'));
     }
 }

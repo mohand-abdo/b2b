@@ -15,8 +15,13 @@ import $ from "jquery";
 window.$ = window.jQuery = $;
 
 
-import "lightbox2/dist/css/lightbox.css";
-import lightbox from "lightbox2";
+import "lightbox2/dist/js/lightbox.js";
+
+lightbox.option({
+    resizeDuration: 200,
+    wrapAround: true,
+});
+
 
 
 /**

@@ -25,15 +25,18 @@ class CreateAdminUserSeeder extends Seeder
 
         // إنشاء الأدوار
         $owner_role = Role::create(['name' => 'owner']);
+        $agent_role = Role::create(['name' => 'agent']);
         $user_role = Role::create(['name' => 'user']);
 
         // جلب الصلاحيات
-        $permissions_owner = Permission::whereNotIn('id', ['54', '55','56'])->pluck('id');
-        $permissions_user = Permission::whereIn('id', ['54', '55','56'])->pluck('id');
+        $permissions_owner = Permission::whereNotIn('id', ['56', '57','58'])->pluck('id');
+        $permissions_user = Permission::whereIn('id', ['56', '57','58'])->pluck('id');
+        $permissions_agent = Permission::whereIn('id', ['2','3','5','6','10','35','36','37'])->pluck('id');
 
         // مزامنة الصلاحيات مع الأدوار
         $owner_role->syncPermissions($permissions_owner);
         $user_role->syncPermissions($permissions_user);
+        $agent_role->syncPermissions($permissions_agent);
 
         // تعيين الدور للمستخدم
         $user->assignRole('owner');

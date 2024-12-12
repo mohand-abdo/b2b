@@ -813,7 +813,7 @@ slide is-expanded side-menu__item {
   font-size: 1rem; }
 
 .app-sidebar .mCS-minimal.mCSB_scrollTools .mCSB_dragger .mCSB_dragger_bar {
-  background: rgba(0, 0, 0, 0.05); }
+  background: rgb(0 0 0 / 9%) }
 
 .app-sidebar .mCSB_scrollTools .mCSB_dragger .mCSB_dragger_bar, .app-sidebar .mCSB_scrollTools .mCSB_draggerRail {
   background: rgba(255, 255, 255, 0.2); }

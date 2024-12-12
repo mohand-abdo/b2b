@@ -41,16 +41,18 @@ class FileController extends Controller
     {
         $validateData = $request->validate(
             [
-                'tree4_id' => 'required',
                 'name' => 'required',
                 'file' => 'required',
+                'tree4_id' => 'required|exists:tree4s,id',
             ],
             [
                 'name.required' => 'يرجي إدخال المرفق او الملف ',
                 'file.required' => 'يجب ان لايكون حقل الملف فارغ ',
+                'tree4_id.required' => 'يجب ان لايكون حقل الحاج او المعتمر فارغ ',
+                'tree4_id.exists' => 'الحاج او المعتمر غير موحود',
             ],
         );
-        $product = new File();
+        $file = new File();
         $formFileName = 'file';
         $fileFinalName = '';
         if ($request->$formFileName != '') {
@@ -59,12 +61,12 @@ class FileController extends Controller
             $request->file($formFileName)->move($path, $fileFinalName);
         }
         if ($fileFinalName != '') {
-            $product->file = $fileFinalName;
+            $file->file = $fileFinalName;
         }
-        $product->tree4_id = $request->tree4_id;
-        $product->name = $request->name;
-        $product->user_id = Auth::user()->id;
-        $product->save();
+        $file->tree4_id = $request->tree4_id;
+        $file->name = $request->name;
+        $file->user_id = Auth::user()->id;
+        $file->save();
         Session()->flash('file');
 
         if (Auth::user()->roles_name == 'user') {
@@ -143,12 +145,15 @@ class FileController extends Controller
         // Validate request data
         $validateData = $request->validate(
             [
-                'tree4_id' => 'required',
                 'name' => 'required',
-                'file' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048', // Added validation for file
+                'file' => 'required',
+                'tree4_id' => 'required|exists:tree4s,id',
             ],
             [
                 'name.required' => 'يرجي إدخال المرفق او الملف ',
+                'file.required' => 'يجب ان لايكون حقل الملف فارغ ',
+                'tree4_id.required' => 'يجب ان لايكون حقل الحاج او المعتمر فارغ ',
+                'tree4_id.exists' => 'الحاج او المعتمر غير موحود',
             ],
         );
 

@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\Client\StoreClientRequest;
+use Illuminate\View\View;
 
 class ClientsController extends Controller
 {
@@ -18,21 +19,21 @@ class ClientsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(): View
     {
         $user = auth()->user();
-        $tree4s = Tree4::where('tree3_code', 1205)->where('status', 1)->get();
+        $tree4s = Tree4::where('tree3_code', 1205)->where('status', 1);
 
         if ($user->roles_name == 'owner') {
+            // لا حاجة لاستخدام get() هنا، لأنها مجموعة بيانات بالفعل
             $tree4s = $tree4s->get(); // عرض جميع البيانات
         } elseif ($user->roles_name == 'agent') {
             $tree4s = $tree4s->where('user_id', $user->id)->get(); // عرض البيانات التي أضافها المستخدم فقط
         }
 
         $tree3s = Tree3::all();
-        $id = 1;
 
-        return view('clients.Clients', compact('tree3s', 'tree4s', 'id'));
+        return view('clients.Clients', compact('tree3s', 'tree4s'));
     }
 
     public function inactive()
@@ -60,9 +61,14 @@ class ClientsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function search()
+    public function search():View
     {
-        $tree4s = Tree4::where('tree3_code', 1205)->where('status', 1)->get();
+        $tree4s = Tree4::where('tree3_code', 1205)->where('status', 1);
+        if (Auth::user()->roles_name == 'owner') {
+            $tree4s = $tree4s->get();
+        }else if (Auth::user()->roles_name == 'agent') {
+            $tree4s = $tree4s->where('user_id', Auth::id())->get();
+        }
 
         return view('clients.index', compact('tree4s'));
     }
@@ -152,13 +158,13 @@ class ClientsController extends Controller
         $end = $request->end;
         $name = $request->tree4;
         $Madin = Operation::where('Madin', $request->tree4)
-            ->whereDate('date', '>=', $request->start)
-            ->whereDate('date', '<=', $request->end)
+            ->whereDate('created_at','>=',$request->start)
+            ->whereDate('created_at', '<=', $request->end)
             ->orderBy('id', 'DESC')
             ->get();
         $Dain = Operation::where('Dain', $request->tree4)
-            ->whereDate('date', '>=', $request->start)
-            ->whereDate('date', '<=', $request->end)
+            ->whereDate('created_at', '>=', $request->start)
+            ->whereDate('created_at', '<=', $request->end)
             ->orderBy('id', 'DESC')
             ->get();
 
@@ -237,6 +243,15 @@ class ClientsController extends Controller
      */
     public function destroy(Request $request)
     {
+        $request->validate(
+            rules: [
+                'id' => ['required', 'exists:tree4s,id'],
+                [
+                    'id.required' => 'معرف الحاج مطلوب.',
+                    'id.exists' => 'الحاج المحدد غير موجود.',
+                ],
+            ],
+        );
         $id = $request->id;
         Tree4::find($id)->delete();
         session()->flash('delete');
@@ -255,7 +270,11 @@ class ClientsController extends Controller
 
     public function show_pic()
     {
-        $tree4Id = Tree4::where('user_id', Auth::id())->pluck('id')->first();
+        if (Auth::user()->roles_name == 'agent') {
+            $tree4Id = Tree4::where('user_id', Auth::id())->get();
+        } else {
+            $tree4Id = Tree4::where('user_id', Auth::id())->pluck('id')->first();
+        }
         $files = File::where('tree4_id', $tree4Id)->get();
         return view('clients.show_pic', compact('files', 'tree4Id'));
     }
@@ -265,6 +284,6 @@ class ClientsController extends Controller
         $tree4_code = Tree4::where('user_id', Auth::id())->pluck('tree4_code')->first();
         $Madin = Operation::where('Madin', $tree4_code)->orderBy('id', 'DESC')->get();
         $Dain = Operation::where('Dain', $tree4_code)->orderBy('id', 'DESC')->get();
-        return view('clients.my_statment', compact('Madin','Dain'));
+        return view('clients.my_statment', compact('Madin', 'Dain'));
     }
 }

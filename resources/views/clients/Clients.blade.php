@@ -1,4 +1,5 @@
 @extends('layouts.master')
+
 @section('css')
     <!-- Internal Data table css -->
     <link href="{{ URL::asset('assets/plugins/datatable/css/dataTables.bootstrap4.min.css') }}" rel="stylesheet" />
@@ -8,6 +9,8 @@
     <link href="{{ URL::asset('assets/plugins/datatable/css/responsive.dataTables.min.css') }}" rel="stylesheet">
     <link href="{{ URL::asset('assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet">
     <link href="{{ URL::asset('assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet">
+    <link href="{{ URL::asset('assets/plugins/jquery-nice-select/css/nice-select.css') }}" rel="stylesheet" />
+
     <!--Internal   Notify -->
     <link href="{{ URL::asset('assets/plugins/notify/css/notifIt.css') }}" rel="stylesheet" />
 @endsection
@@ -113,17 +116,17 @@
                             <tbody>
                                 @foreach ($tree4s as $tree)
                                     <tr>
-                                        <td>{{ $id++ }}</td>
-                                       <td>
-                    <a href="{{ route('file.show', $tree->id) }}">{{ $tree->tree4_name }}</a>
-                </td>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>
+                                            <a href="{{ route('file.show', $tree->id) }}">{{ $tree->tree4_name }}</a>
+                                        </td>
                                         <td>{{ $tree->iden }}</td>
                                         <td>{{ $tree->phone }}</td>
                                         <td>{{ $tree->email }}</td>
                                         {{-- <td>{{ $tree->location }}</td> --}}
                                         <td>{{ $tree->nationalty }}</td>
                                         <td>
-                                            @if ($tree->user)
+                                            @if ($tree->user->roles_name == 'agent')
                                                 {{ $tree->user->name }}
                                             @else
                                                 لا يوجد وكيل
@@ -276,7 +279,7 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="type">النوع</label>
-                                        <select name="type" id="type" class="form-control" required>
+                                        <select name="type" id="type" class="form-control nice-select  custom-select" required>
                                             <option value="" disabled selected>اختر نوعاً</option>
                                             <option value="حاج">حاج</option>
                                             <option value="معتمر">معتمر</option>
@@ -425,6 +428,9 @@
     <!--Internal  Notify js -->
     <script src="{{ URL::asset('assets/plugins/notify/js/notifIt.js') }}"></script>
     <script src="{{ URL::asset('assets/plugins/notify/js/notifit-custom.js') }}"></script>
+
+    <script src="{{ URL::asset('assets/plugins/jquery-nice-select/js/jquery.nice-select.js') }}"></script>
+    <script src="{{ URL::asset('assets/plugins/jquery-nice-select/js/nice-select.js') }}"></script>
 
     {{-- delete script  --}}
     <script>

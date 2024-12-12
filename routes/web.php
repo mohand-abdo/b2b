@@ -1,10 +1,8 @@
 <?php
 
-use App\Http\Controllers\Auth\RegisterController;
-use GuzzleHttp\Middleware;
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -113,6 +111,8 @@ Route::group([ 'middleware' => ['auth']], function () {
     // route show client account
     Route::get('client_statement', [App\Http\Controllers\ClientsController::class, 'search'])->name('client_statement');
     Route::post('client_statement', [App\Http\Controllers\ClientsController::class, 'show'])->name('client_statement.show');
+    Route::get('campaign_statement', [App\Http\Controllers\StagesController::class, 'search'])->name('campaign_statement');
+    Route::post('campaign_statement', [App\Http\Controllers\StagesController::class, 'search_post'])->name('campaign_statement.store');
     Route::get('client_myStatement', [App\Http\Controllers\ClientsController::class, 'my_statment'])->name('client_myStatement');
     // end route client
 
@@ -142,6 +142,9 @@ Route::group([ 'middleware' => ['auth']], function () {
 
     Route::resource('Setting', App\Http\Controllers\SettingController::class);
     Route::put('Setting', [App\Http\Controllers\SettingController::class, 'update'])->name('settings_update');
+
+    // المسارات الخاصة بالوكيل
+    Route::resource('agent',App\Http\Controllers\AgentController::class)->except('show');
     // end route auth
 });
 //////////////////////////////////////////////qrcode//////////////////////////////////////////
@@ -152,3 +155,4 @@ Route::get('Contract_scan/{id}', [App\Http\Controllers\ContractController::class
 // Route::resource('profile', App\Http\Controllers\ProfileController::class);
 // rote all page
 Route::get('/{page}', [App\Http\Controllers\AdminController::class, 'index']);
+
