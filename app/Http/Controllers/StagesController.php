@@ -92,14 +92,19 @@ class StagesController extends Controller
     {
         $start = $request->start;
         $end = $request->end;
+        $name = Campaigns::findOrFail($request->campaign)->name;
         $Madin = Operation::with('plus')->whereHas('plus', callback: function ($query) use ($request) {
             $query->where('campaign_id', $request->campaign); // الشرط بناءً على campaign_id
         })
             ->whereDate('created_at', '>=', $request->start)
             ->whereDate('created_at', '<=', $request->end)
             ->orderBy('id', 'DESC')
-            ->where('Madin', 'like', '1205%')
-            ->get();
+            ->where('Madin', 'like', '1205%');
+            if(Auth::user()->roles_name == 'owner'){
+                $Madin = $Madin->get();
+            }elseif(Auth::user()->roles_name == 'agent'){
+                $Madin = $Madin->where('user_id', Auth::id())->get();
+            }
 
             $Dain = Operation::with('plus')->whereHas('plus', callback: function ($query) use ($request) {
             $query->where('campaign_id', $request->campaign); // الشرط بناءً على campaign_id
@@ -107,9 +112,13 @@ class StagesController extends Controller
             ->whereDate('created_at', '>=', $request->start)
             ->whereDate('created_at', '<=', $request->end)
             ->orderBy('id', 'DESC')
-            ->where('Dain', 'like', '1205%')
-            ->get();
+            ->where('Dain', 'like', '1205%');
+            if(Auth::user()->roles_name == 'owner'){
+                $Dain = $Dain->get();
+            }elseif(Auth::user()->roles_name == 'agent'){
+                $Dain = $Dain->where('user_id', Auth::id())->get();
+            }
 
-        return view('stages.show', compact('Madin','Dain', 'start', 'end'));
+        return view('stages.show', compact('Madin','Dain','name', 'start', 'end'));
     }
 }

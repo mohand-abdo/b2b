@@ -28,7 +28,12 @@ class ClientPayController extends Controller
         }
         // $tree4 = Tree4::all();
         // $daily = Operation::where('type', 1)->get();
-        $daily = Operation::where('type', 8)->orderBy('created_at', 'desc')->get();
+        $daily = Operation::where('type', 8)->orderBy('created_at', 'desc');
+        if(Auth::user()->roles_name == 'owner'){
+            $daily = $daily->get();
+        }else if(Auth::user()->roles_name == 'agent'){
+            $daily = $daily->where('user_id', Auth::id())->get();
+        }
         $id = 1;
         return view('clients.client_pay', compact('tree4', 'daily', 'id'));
     }
@@ -67,7 +72,7 @@ class ClientPayController extends Controller
         $daily->Madin = $request->Madin;
         $daily->price = $request->price;
         $daily->date = $request->date;
-        $daily->pluse_id = $pluseId->id;
+        $daily->plus_id = $pluseId == '' ? null : $pluseId->id;
         $daily->Statement = $request->Statement;
         $daily->Constraint_number = $request->Constraint_number;
         $daily->type = 8;

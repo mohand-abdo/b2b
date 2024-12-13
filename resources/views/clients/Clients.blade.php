@@ -197,7 +197,7 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="type">النوع</label>
-                                        <select name="type" id="type" class="form-control" required>
+                                        <select name="type" id="type" class="form-control nice-select" required>
                                             <option value="" disabled selected>اختر نوعاً</option>
                                             <option value="حاج">حاج</option>
                                             <option value="معتمر">معتمر</option>
@@ -279,7 +279,8 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="type">النوع</label>
-                                        <select name="type" id="type" class="form-control nice-select  custom-select" required>
+                                        {{-- id="select-beast" class="form-control  nice-select  custom-select"> --}}
+                                        <select name="type" id="type" class="form-control  nice-select" required>
                                             <option value="" disabled selected>اختر نوعاً</option>
                                             <option value="حاج">حاج</option>
                                             <option value="معتمر">معتمر</option>

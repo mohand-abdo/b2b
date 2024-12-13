@@ -29,7 +29,7 @@
                     <div class="card-body">
                         <div class="invoice-header">
 
-                            <h1 class="invoice-title"> كشف حساب العملاء في : {{ $Madin->first()->plus->Campaign->name }} <span></span>
+                            <h1 class="invoice-title"> كشف حساب العملاء في : {{ $name }} <span></span>
                                 <div class="col-md">
                                     <p><span> &nbsp;</span>&nbsp; <span>&nbsp;</span></p>
                                     <p><span> &nbsp;</span>&nbsp; <span>&nbsp;</span></p>

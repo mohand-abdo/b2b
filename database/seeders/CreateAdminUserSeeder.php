@@ -31,7 +31,7 @@ class CreateAdminUserSeeder extends Seeder
         // جلب الصلاحيات
         $permissions_owner = Permission::whereNotIn('id', ['56', '57','58'])->pluck('id');
         $permissions_user = Permission::whereIn('id', ['56', '57','58'])->pluck('id');
-        $permissions_agent = Permission::whereIn('id', ['2','3','5','6','10','35','36','37'])->pluck('id');
+        $permissions_agent = Permission::whereIn('id', ['2','3','5','6','10','35','36','37','40','41','42','43'])->pluck('id');
 
         // مزامنة الصلاحيات مع الأدوار
         $owner_role->syncPermissions($permissions_owner);
