@@ -6,8 +6,11 @@ use App\Models\User;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use App\Mail\AgentAddClientEmail;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\RedirectResponse;
 
 
@@ -62,6 +65,9 @@ class AgentController extends Controller
         ]);
 
         $user->assignRole('agent');
+
+        Mail::to('mohand10959@gmail.com')->send(new AgentAddClientEmail($user,Auth::user()->name));
+
         return redirect()->route('agent.index')->with('success', 'تم حفظ الوكيل بنجاح');
     }
 

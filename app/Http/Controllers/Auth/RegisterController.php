@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Models\User;
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
+use App\Notifications\UserAdded;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -45,7 +47,7 @@ class RegisterController extends Controller
     {
         return Validator::make($data, [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'email' => ['nullable', 'string', 'email', 'max:255', 'unique:users'],
             'phone' => ['required', 'numeric', 'digits:10', 'unique:users,phone_number'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
@@ -68,9 +70,23 @@ class RegisterController extends Controller
             'password' => Hash::make($data['password']),
         ]);
 
-        $user->assignRole('user'); // تعيين الدور للمستخدم الجديد
+        $admins = User::where('roles_name', 'owner')->get();
 
-        return $user; // إعادة المستخدم المُنشأ
+        foreach ($admins as $admin) {
+            Notification::create([
+                'title' => 'تم تسجيل مستخدم جديد',
+                'message' => "المستخدم {$user->name} قام بالتسجيل في النظام.",
+                'url' => 'users.index',
+                'user_id' => $admin->id,
+                'item_id' => $user->id,
+            ]);
+        }
+
+        // تعيين الدور للمستخدم الجديد
+        $user->assignRole('user');
+
+        // إعادة المستخدم المُنشأ
+        return $user;
     }
 
     protected function register(Request $request)

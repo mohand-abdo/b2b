@@ -13,6 +13,14 @@
     <link rel="stylesheet" href="{{ URL::asset('assets/plugins/telephoneinput/telephoneinput-rtl.css') }}">
     <!-- Internal Notify css -->
     <link href="{{ URL::asset('assets/plugins/notify/css/notifIt.css') }}" rel="stylesheet" />
+    {{-- Internal Nice select --}}
+    <link href="{{ URL::asset('assets/plugins/jquery-nice-select/css/nice-select.css') }}" rel="stylesheet" />
+
+    <style>
+        .select2-container--default .select2-selection--single {
+            height: 40px !important;
+        }
+    </style>
 @endsection
 
 @section('page-header')
@@ -61,27 +69,17 @@
                         <div class="row">
                         
                             <div class="col-md-4">
-                                <label>الحاج</label>
-                                <select id="tree4_id" name="tree4_id" class="form-control" required>
-                                    <option value="">--  اختر الحاج / المعتمر--</option>
-                                    @foreach ($tree4 as $x)
-                                        <option value="{{ $x->id }}">{{ $x->tree4_name }}</option>
-                                    @endforeach
-                                </select>
+                                <label>الحاج او المعتمر</label>
+                                <select id="tree4_id" name="tree4_id" class="form-control tree4" required></select>
                             </div>
 
                             <div class="col-md-4">
                                 <label>حملات الحج والعمرة</label>
-                                <select id="campaign_id" name="campaign_id" class="form-control" required>
-                                    <option value="">-- اختر الحملة --</option>
-                                    @foreach ($campaigns as $campaign)
-                                        <option value="{{ $campaign->id }}">{{ $campaign->name }}</option>
-                                    @endforeach
-                                </select>
+                                <select id="campaign_id" name="campaign_id" class="form-control campaign" required></select>
                             </div>
                             <div class="col-md-4">
                                 <label> الحساب</label>
-                                <select id="live_bank_and_safe" required name="bank_and_safe" class="form-control">
+                                <select id="live_bank_and_safe" required name="bank_and_safe" class="form-control nice-select">
                                     <option value=""> -- اختر الحساب --</option>
 
                                     @foreach ($tree4s as $tree)
@@ -180,7 +178,6 @@
     <script src="{{ URL::asset('assets/plugins/fancyuploder/fancy-uploader.js') }}"></script>
     <!-- Internal Form-elements js -->
     <script src="{{ URL::asset('assets/js/advanced-form-elements.js') }}"></script>
-    <script src="{{ URL::asset('assets/js/select2.js') }}"></script>
     <!-- Internal TelephoneInput js -->
     <script src="{{ URL::asset('assets/plugins/telephoneinput/telephoneinput.js') }}"></script>
     <script src="{{ URL::asset('assets/plugins/telephoneinput/inttelephoneinput.js') }}"></script>
@@ -189,6 +186,11 @@
     <script src="{{ URL::asset('assets/plugins/notify/js/notifit-custom.js') }}"></script>
     <!-- Internal CKEditor js -->
     <script src="https://cdn.ckeditor.com/4.16.2/standard/ckeditor.js"></script>
+
+    {{-- Internal Nice Select --}}
+    <script src="{{ URL::asset('assets/plugins/jquery-nice-select/js/jquery.nice-select.js') }}"></script>
+    <script src="{{ URL::asset('assets/plugins/jquery-nice-select/js/nice-select.js') }}"></script>
+
     <script>
         // Initialize CKEditor
         CKEDITOR.replace('ckeditor');
@@ -203,5 +205,43 @@
             var totalAmount = amount + (amount * tax / 100);
             document.getElementById('total_amount').value = totalAmount.toFixed(2);
         }
+    
+        function select2list(selector, url, placeholder) {
+            $(selector).select2({
+                language: {
+                    inputTooShort: function() {
+                        return 'ادخل حرف واحد على الاقل';
+                    }
+                },
+                ajax: {
+                    url: url,
+                    dataType: 'json',
+                    delay: 100,
+                    data: function(params) {
+                        return {
+                            q: params.term,
+                            page: params.page
+                        };
+                    },
+                    processResults: function(data, params) {
+                        console.log(data);
+                        params.page = params.page || 1;
+                        return {
+                            results: data,
+                            pagination: {
+                                more: ((data.total_count) > (params.page * 20))
+                            }
+                        };
+                    },
+                    cache: true
+                },
+                placeholder: placeholder,
+                minimumInputLength: 1,
+            });
+
+        };
+
+        select2list(".tree4", "{{ route('select2.getStatement') }}", "يرجى إدخال الحاج او المعتمر");
+        select2list(".campaign", "{{ route('select2.getCampaign') }}", "يرجى إدخال الحملة");
     </script>
 @endsection

@@ -25,27 +25,18 @@
 <script src="{{ URL::asset('assets/plugins/sidebar/sidebar-custom.js') }}"></script>
 <!-- Eva-icons js -->
 <script src="{{ URL::asset('assets/js/eva-icons.min.js') }}"></script>
-@yield('js')
+@vite(['resources/css/app.css', 'resources/js/app.js'])
+
 <!-- Sticky js -->
 <script src="{{ URL::asset('assets/js/sticky.js') }}"></script>
 <!-- custom js -->
 <script src="{{ URL::asset('assets/js/custom.js') }}"></script><!-- Left-menu js-->
 <script src="{{ URL::asset('assets/plugins/side-menu/sidemenu.js') }}"></script>
+@yield('js')
 
 <script>
     // العثور على جميع الحقول النصية التي تستخدم CKEditor وتطبيق التعطيل عليها
     document.querySelectorAll('textarea').forEach(function(textarea) {
         CKEDITOR.replace(textarea.id);
-    });
-
-    // تعطيل التحذيرات لجميع المحررات
-    CKEDITOR.on('instanceReady', function(evt) {
-        var editor = evt.editor;
-        editor.on('notificationShow', function(e) {
-            if (e.data.message.indexOf('The license key is missing or invalid') !== -1 || e.data.message
-                .indexOf('This CKEditor version is not secure') !== -1) {
-                e.cancel();
-            }
-        });
     });
 </script>

@@ -52,6 +52,18 @@
                 </script>
                 @endif
 
+                @if (session()->has('error'))
+                <script>
+                    window.onload = function() {
+                        notif({
+                            msg: " لا يمكنك تسجيل حاج او معتمر جديد"
+                            , type: "error"
+                        })
+                    }
+
+                </script>
+                @endif
+
 
                 <div class="d-flex">
                     <h5 class="content-title mb-0 my-auto"> إضافة البيانات</h5>

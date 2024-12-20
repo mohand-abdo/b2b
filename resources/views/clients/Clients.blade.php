@@ -197,7 +197,7 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="type">النوع</label>
-                                        <select name="type" id="type" class="form-control nice-select" required>
+                                        <select name="type" class="form-control nice-select" required>
                                             <option value="" disabled selected>اختر نوعاً</option>
                                             <option value="حاج">حاج</option>
                                             <option value="معتمر">معتمر</option>
@@ -207,8 +207,8 @@
 
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="phone">رقم الهوية</label>
-                                        <input type="text" name="iden" id="iden" class="form-control"
+                                        <label for="phone">رقم الجواز</label>
+                                        <input type="text" name="iden" class="form-control"
                                             required>
                                     </div>
                                 </div>
@@ -218,13 +218,13 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="vat_number">رقم الهاتف</label>
-                                        <input type="number" name="phone" id="phone" class="form-control">
+                                        <input type="number" name="phone" class="form-control" required>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="email">البريد الإلكتروني</label>
-                                        <input type="text" name="email" id="email" class="form-control">
+                                        <input type="text" name="email" class="form-control">
                                     </div>
                                 </div>
                             </div>
@@ -299,7 +299,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="phone">رقم الهاتف</label>
-                                        <input id="phone" type="text" name="phone" class="form-control">
+                                        <input id="phone" type="text" name="phone" class="form-control" required>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -447,6 +447,7 @@
             var nationalty = button.data('nationalty')
             var file = button.data('file')
             var type = button.data('type');
+            console.log(type);
 
             var modal = $(this)
             modal.find('.modal-body #id').val(id);
@@ -458,7 +459,20 @@
             modal.find('.modal-body #location').val(location);
             modal.find('.modal-body #nationalty').val(nationalty);
             modal.find('.modal-body #file').val(file);
-            modal.find('.modal-body #type').val(type);
+
+            // المرور على كل خيار في select
+            $('#type option').each(function() {
+                var value = $(this).val(); // الحصول على القيمة
+
+                // اختبار القيم
+                if (value == type) {
+                    console.log(value);
+                    $(this).attr('selected', 'selected'); // تعيين خاصية selected
+                } else if (value == type) {
+                    $(this).attr('selected', 'selected'); // تعيين خاصية selected
+                }
+            });
+    $('#type').niceSelect('update');
 
         })
     </script>

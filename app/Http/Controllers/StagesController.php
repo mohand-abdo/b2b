@@ -84,8 +84,7 @@ class StagesController extends Controller
 
     public function search(): View
     {
-        $campaigns = Campaigns::where('status', 1)->get();
-        return view('stages.search', compact('campaigns'));
+        return view('stages.search');
     }
 
     public function search_post(Request $request): View
@@ -120,5 +119,21 @@ class StagesController extends Controller
             }
 
         return view('stages.show', compact('Madin','Dain','name', 'start', 'end'));
+    }
+
+    public function getCampaign(Request $request)
+    {
+        $search = $request->get('q');
+        $campaigns = Campaigns::where('status', 1)->
+            where('name', 'LIKE', '%'. $search. '%')->get();
+            $formattedResults = $campaigns->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'text' => $item->name, // الحقل الذي سيظهر في Select2
+            ];
+        });
+
+
+        return response()->json($formattedResults);
     }
 }

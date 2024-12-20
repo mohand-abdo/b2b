@@ -78,4 +78,13 @@
     .swal-text {
         text-align: center
     }
+
+    .unread {
+    background-color: #f0f8ff; /* لون خلفية مميز */
+    border-left: 5px solid #0022ff; /* إضافة خط جانبي لتمييز الإشعار غير المقروء */
+
+    .main-header-notification.show .dropdown-menu{
+        overflow:  auto !important;
+    }
+}
 </style>

@@ -2,9 +2,11 @@
 @section('css')
 <!--- Internal Select2 css-->
     <link href="{{ URL::asset('assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet">
-    {{-- select2  --}}
-    <link href="{{URL::asset('assets/plugins/select2/css/select2.min.css')}}" rel="stylesheet">
-    <link href="{{URL::asset('assets/plugins/select2/css/select2.min.css')}}" rel="stylesheet">
+    <style>
+        .select2-container--default .select2-selection--single {
+            height: 40px !important;
+        }
+    </style>
 @livewireStyles
 @endsection
 
@@ -44,12 +46,7 @@
                                 <label>  الحملة
                                     <span class="required">*</span>
                                 </label>
-                                <select required name="campaign" class="form-control" >
-                                    <option value=""  selected disabled>اختر الحملة </option>
-                                    @foreach ($campaigns as $campaign)
-                                    <option value="{{$campaign->id}}">{{$campaign->name}}</option>
-                                    @endforeach
-                                </select>
+                                <select required name="campaign" class="form-control select2" ></select>
                             </div>
 
                             </br>
@@ -90,12 +87,49 @@
 @endsection
 @section('js')
 <!-- Internal Select2 js-->
-    <script src="{{ URL::asset('assets/plugins/select2/js/select2.min.js') }}"></script>
     <!--Internal  Form-elements js-->
     <script src="{{ URL::asset('assets/js/advanced-form-elements.js') }}"></script>
-    <script src="{{ URL::asset('assets/js/select2.js') }}"></script>
     <!-- Internal form-elements js -->
     <script src="{{ URL::asset('assets/js/form-elements.js') }}"></script>
+    <script src="{{ URL::asset('assets/plugins/select2/js/select2.min.js') }}"></script>
+    <script>
+        function select2list(selector, url, placeholder) {
+            $(selector).select2({
+                language: {
+                    inputTooShort: function() {
+                        return 'ادخل حرف واحد على الاقل';
+                    }
+                },
+                ajax: {
+                    url: url,
+                    dataType: 'json',
+                    delay: 100,
+                    data: function(params) {
+                        return {
+                            q: params.term,
+                            page: params.page
+                        };
+                    },
+                    processResults: function(data, params) {
+                        console.log(data);
+                        params.page = params.page || 1;
+                        return {
+                            results: data,
+                            pagination: {
+                                more: ((data.total_count) > (params.page * 20))
+                            }
+                        };
+                    },
+                    cache: true
+                },
+                placeholder: placeholder,
+                minimumInputLength: 1,
+            });
+
+        };
+
+        select2list(".select2", "{{ route('select2.getCampaign') }}", "يرجى  اختيار الحملة");
+    </script>
 @livewireScripts
 
 @endsection

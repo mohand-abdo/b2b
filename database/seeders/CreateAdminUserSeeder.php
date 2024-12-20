@@ -15,8 +15,8 @@ class CreateAdminUserSeeder extends Seeder
     {
         // إنشاء المستخدم
         $user = User::create([
-            'name' => 'مهند عبد الوهاب',
-            'email' => 'admin@gmail.com',
+            'name' => 'صديق الجالب',
+            'email' => 'info@b2btravelsudan.com',
             'phone_number' => '0121496141',
             'password' => bcrypt('123456789'),
             'roles_name' => 'owner',

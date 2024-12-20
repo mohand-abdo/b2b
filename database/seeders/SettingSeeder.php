@@ -14,12 +14,14 @@ class SettingSeeder extends Seeder
      */
     public function run()
     {
-        $setting = new setting();
+        $setting = new Setting();
         $setting->id = 1;
-        $setting->name = 'براند للاعمال المتقدمة المحددة';
+        $setting->name = 'b2b';
         $setting->location = 'الخرطوم - بحري';
         $setting->phone = '249116266500';
-        $setting->email = 'Brand-sd@gmail.com';
+        $setting->no_khartoum = '202020';
+        $setting->no_faisal = '1101010';
+        $setting->email = 'info@b2btravelsudan';
         $setting->logo = '17307014763895.png';
         $setting->save();
     }

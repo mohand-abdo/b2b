@@ -14,12 +14,12 @@ class Operation extends Model
      //  دائن
      public function Dains(): BelongsTo
      {
-         return $this->belongsTo(Tree4::class, 'Dain', 'tree4_code');
+         return $this->belongsTo(Tree4::class, 'Dain', 'id');
      }
     // مدين
     public function Madins(): BelongsTo 
     {
-        return $this->belongsTo(Tree4::class, 'Madin', 'tree4_code');
+        return $this->belongsTo(Tree4::class, 'Madin', 'id');
     }
 
     public function plus(): BelongsTo 

@@ -93,6 +93,22 @@
 
 
                         </div>
+
+                        <div class="row">
+                            <div class="col">
+                                <label for="bankak" class="control-label"> رقم بنكك </label>
+                                <input type="text" class="form-control" id="bankak" name="no_khartoum"
+                                    value="{{ $setting->no_khartoum }}" title="يرجي ادخال رقم بنكك" required>
+                            </div>
+
+                            <div class="col">
+                                <label>رقم فوري</label>
+                                <input class="form-control " name="no_faisal" value="{{ $setting->no_faisal }}" type="text"
+                                    value="" required title="يرجي ادخال رقم فوري ">
+                            </div>
+
+
+                        </div>
                         <br>
                         <div class="row">
                             <div class="col">

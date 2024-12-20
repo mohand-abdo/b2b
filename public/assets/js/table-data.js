@@ -50,7 +50,7 @@ $(function(e) {
         table.row('.selected').remove().draw( false );
     } );
 	
-	//Details display datatable
+	// Details display datatable
 	$('#example-1').DataTable( {
 		responsive: true,
 		language: {

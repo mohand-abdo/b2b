@@ -8,7 +8,8 @@
     <div class="breadcrumb-header justify-content-between">
         <div class="my-auto">
             <div class="d-flex">
-                <h4 class="content-title mb-0 my-auto">ادارة الوكلاء</h4><span class="text-muted mt-1 tx-13 mr-2 mb-0">/ اضافة وكيل</span>
+                <h4 class="content-title mb-0 my-auto">ادارة الوكلاء</h4><span class="text-muted mt-1 tx-13 mr-2 mb-0">/ اضافة
+                    وكيل</span>
             </div>
         </div>
     </div>
@@ -51,7 +52,7 @@
                                 <div class="parsley-input col-md-6 mg-t-20 mg-md-t-0">
                                     <label>البريد الالكتروني: <span class="tx-danger">*</span></label>
                                     <input class="form-control" data-parsley-class-handler="#lnWrapper" name="email"
-                                        required="" type="email" value="{{ old('email') }}">
+                                        type="email" value="{{ old('email') }}">
                                 </div>
                             </div>
 
@@ -61,7 +62,7 @@
                             <div class="parsley-input col-md-6 mg-t-20 mg-md-t-0">
                                 <label>كلمة المرور: <span class="tx-danger">*</span></label>
                                 <input class="form-control" data-parsley-class-handler="#lnWrapper" name="password"
-                                    required="" type="password" >
+                                    required="" type="password">
                             </div>
 
                             <div class="parsley-input col-md-6 mg-t-20 mg-md-t-0">
@@ -79,8 +80,9 @@
                             <div class="parsley-input col-md-6 mg-t-20 mg-md-t-0">
                                 <label>حالة المستخدم</label>
                                 <select name="Status" id="select-beast" class="form-control  nice-select  custom-select">
-                                    <option value="مفعل" {{ old('Status' =='مفعل' ? 'selected' : '') }}>مفعل</option>
-                                    <option value="غير مفعل" {{ old('Status' =='غير مفعل' ? 'selected' : '') }}>غير مفعل</option>
+                                    <option value="مفعل" {{ old('Status' == 'مفعل' ? 'selected' : '') }}>مفعل</option>
+                                    <option value="غير مفعل" {{ old('Status' == 'غير مفعل' ? 'selected' : '') }}>غير مفعل
+                                    </option>
                                 </select>
                             </div>
                         </div>

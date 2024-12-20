@@ -29,6 +29,7 @@ class Contract extends Model
     {
         return $this->belongsTo(Tree4::class);
     }
+    
 
     
     public function Campaign()

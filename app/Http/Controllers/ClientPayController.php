@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Operation;
 use App\Models\Plus;
+use App\Models\User;
 use App\Models\Tree4;
+use App\Models\Operation;
+use App\Models\Notification;
 use App\Models\Restrictions;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 use NumberToWords\NumberToWords;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class ClientPayController extends Controller
 {
@@ -18,24 +20,21 @@ class ClientPayController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $tree4 = DB::table('tree4s')->where('tree3_code', '=', '1202')->orWhere('tree3_code', '=', '1203')->Where('status', '=', '1');
-        if (Auth::user()->roles_name == 'owner') {
-            $tree4 = $tree4->orWhere('tree3_code', '=', '1205')->get();
-        }elseif (Auth::user()->roles_name == 'agent'){
-            $tree4 = $tree4->orWhere('tree3_code', '=', '1205')->where('user_id', Auth::id())->get();
-        }
-        // $tree4 = Tree4::all();
-        // $daily = Operation::where('type', 1)->get();
         $daily = Operation::where('type', 8)->orderBy('created_at', 'desc');
-        if(Auth::user()->roles_name == 'owner'){
+        if (Auth::user()->roles_name == 'owner') {
             $daily = $daily->get();
-        }else if(Auth::user()->roles_name == 'agent'){
+            if ($request->id !== null) {
+                $notfiy = Notification::findOrFail($request->id);
+                $notfiy->read = true;
+                $notfiy->save();
+            }
+        } elseif (Auth::user()->roles_name == 'agent') {
             $daily = $daily->where('user_id', Auth::id())->get();
         }
         $id = 1;
-        return view('clients.client_pay', compact('tree4', 'daily', 'id'));
+        return view('clients.client_pay', compact('daily', 'id'));
     }
 
     /**
@@ -67,17 +66,17 @@ class ClientPayController extends Controller
             ->latest()
             ->first();
         // $check =   $request->Constraint_number;
-        $daily = new Operation();
-        $daily->Dain = $request->Dain;
-        $daily->Madin = $request->Madin;
-        $daily->price = $request->price;
-        $daily->date = $request->date;
-        $daily->plus_id = $pluseId == '' ? null : $pluseId->id;
-        $daily->Statement = $request->Statement;
-        $daily->Constraint_number = $request->Constraint_number;
-        $daily->type = 8;
-        $daily->user_id = Auth::user()->id;
-        $daily->save();
+        $operation = new Operation();
+        $operation->Dain = $request->Dain;
+        $operation->Madin = $request->Madin;
+        $operation->price = $request->price;
+        $operation->date = $request->date;
+        $operation->plus_id = $pluseId == '' ? null : $pluseId->id;
+        $operation->Statement = $request->Statement;
+        $operation->Constraint_number = $request->Constraint_number;
+        $operation->type = 8;
+        $operation->user_id = Auth::user()->id;
+        $operation->save();
 
         $op_id = Operation::latest()->first()->id;
         $daily = new Restrictions();
@@ -104,6 +103,18 @@ class ClientPayController extends Controller
         $daily->type = 8;
         $daily->user_id = Auth::user()->id;
         $daily->save();
+
+        if (Auth::user()->roles_name == 'agent') {
+            foreach (User::where('roles_name', 'owner')->get() as $admin) {
+                // حفظ الإشعار في قاعدة البيانات
+                Notification::create([
+                    'user_id' => $admin->id,
+                    'title' => 'دفعية جديدة',
+                    'url' => 'ClientPay.index',
+                    'message' => 'قام الوكيل  ' . Auth::user()->name . ' بدفعة مالية مقدارها ' . $request->price . ' في الحساب  ' . $operation->Madins->tree4_name,
+                ]);
+            }
+        }
 
         Session()->flash('success');
 
@@ -162,5 +173,43 @@ class ClientPayController extends Controller
         Operation::find($id)->delete();
         session()->flash('delete');
         return redirect('/ClientPay');
+    }
+
+    public function getSelect(Request $request)
+    {
+        $search = $request->get('q'); // النص المدخل من المستخدم
+
+        // الاستعلام الأساسي
+        $query = Tree4::where('status', '=', '1') // الشرط العام
+            ->where(function ($q) {
+                $q->whereIn('tree3_code', ['1202', '1203']); // الشرط الأساسي للكود 1202 و 1203
+            });
+
+        // إذا كان هناك نص بحث، إضافة شرط البحث
+        if (!empty($search)) {
+            $query->where('tree4_name', 'like', '%' . $search . '%');
+        }
+
+        // جلب النتائج حسب الدور
+        if (Auth::user()->roles_name == 'owner') {
+            // المالك يمكنه رؤية جميع السجلات التي تحتوي على الكود 1205 بدون شرط إضافي
+            $tree4 = $query->orWhere('tree3_code', '1205')->get();
+        } elseif (Auth::user()->roles_name == 'agent') {
+            // الوكيل يحتاج إلى شرط إضافي عند الكود 1205
+            $tree4 = $query
+                ->orWhere(function ($q) {
+                    $q->where('tree3_code', '=', '1205')->where('user_id', '=', Auth::id());
+                })
+                ->get();
+        }
+
+        $formattedResults = $tree4->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'text' => $item->tree4_name, // الحقل الذي سيظهر في Select2
+            ];
+        });
+
+        return response()->json($formattedResults);
     }
 }

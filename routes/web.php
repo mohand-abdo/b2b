@@ -1,6 +1,5 @@
 <?php
 
-
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -25,7 +24,7 @@ Auth::routes();
 //Auth::routes(['register'=>false]);
 //  route auth
 
-Route::group([ 'middleware' => ['auth']], function () {
+Route::group(['middleware' => ['auth']], function () {
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
     // الراوتات الخاصة بنظام العمرة
@@ -46,6 +45,7 @@ Route::group([ 'middleware' => ['auth']], function () {
     Route::group(['middleware' => ['auth']], function () {
         Route::resource('roles', App\Http\Controllers\RoleController::class);
         Route::resource('users', App\Http\Controllers\UserController::class);
+        // Route::get('users',[App\Http\Controllers\UserController::class, 'index'])->name('users.index');
     });
 
     Route::get('customers_report', [App\Http\Controllers\Customers_Report::class, 'index']);
@@ -144,8 +144,14 @@ Route::group([ 'middleware' => ['auth']], function () {
     Route::put('Setting', [App\Http\Controllers\SettingController::class, 'update'])->name('settings_update');
 
     // المسارات الخاصة بالوكيل
-    Route::resource('agent',App\Http\Controllers\AgentController::class)->except('show');
+    Route::resource('agent', App\Http\Controllers\AgentController::class)->except('show');
     // end route auth
+
+    // عمل select2
+    Route::get('get/select', [App\Http\Controllers\ClientPayController::class, 'getSelect'])->name('select2.getSelect');
+    Route::get('get/statement', [App\Http\Controllers\ClientsController::class, 'getStatement'])->name('select2.getStatement');
+    Route::get('get/campaign', [App\Http\Controllers\StagesController::class, 'getCampaign'])->name('select2.getCampaign');
+
 });
 //////////////////////////////////////////////qrcode//////////////////////////////////////////
 
@@ -156,3 +162,4 @@ Route::get('Contract_scan/{id}', [App\Http\Controllers\ContractController::class
 // rote all page
 Route::get('/{page}', [App\Http\Controllers\AdminController::class, 'index']);
 
+Route::get('/email', function () {});

@@ -98,7 +98,7 @@
                                     <th class="wd-5p border-bottom-0">م</th>
                                     <th class="wd-20p border-bottom-0">إسم الحملة </th>
                                     <th class="wd-15p border-bottom-0"> اسم المرحلة </th>
-                                    <th class="wd-10p border-bottom-0"> عدد الحجاج </th>
+                                    <th class="wd-10p border-bottom-0"> عدد الحجاج وا المعتمرين </th>
                                     <th class="wd-15p border-bottom-0"> تاريخ الإضافة </th>
                                     <th class="wd-25p border-bottom-0">العمليات </th>
                                 </tr>
@@ -116,7 +116,7 @@
                                             @can('إضافة حجاج للمرحلة')
                                                 <a href="{{ route('Plus.index', ['id' => $stage->id, 'campaign' => $stage->campaign_id]) }}"
                                                     class="btn btn-outline-info btn-sm" title="عرض">
-                                                    <i class="fa fa-plus"></i>&nbsp;&nbsp;إضافة حجاج للمرحلة
+                                                    <i class="fa fa-plus"></i>&nbsp;&nbsp;إضافة حجاج او معتمر للمرحلة
                                                 </a>
                                             @endcan
                                             @can('تعديل مرحلة')

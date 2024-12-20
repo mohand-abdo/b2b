@@ -3,14 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Models\File;
+use App\Models\User;
 use App\Models\Tree3;
 use App\Models\Tree4;
 use App\Models\Operation;
+use Illuminate\View\View;
+use App\Models\Notification;
 use Illuminate\Http\Request;
+use App\Mail\AgentAddClientEmail;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\Client\StoreClientRequest;
-use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 
 class ClientsController extends Controller
 {
@@ -19,7 +24,7 @@ class ClientsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(): View
+    public function index(Request $request): View
     {
         $user = auth()->user();
         $tree4s = Tree4::where('tree3_code', 1205)->where('status', 1);
@@ -31,12 +36,18 @@ class ClientsController extends Controller
             $tree4s = $tree4s->where('user_id', $user->id)->get(); // عرض البيانات التي أضافها المستخدم فقط
         }
 
+        if ($request->id !== null) {
+            $notfiy = Notification::findOrFail($request->id);
+            $notfiy->read = true;
+            $notfiy->save();
+        }
+
         $tree3s = Tree3::all();
 
         return view('clients.Clients', compact('tree3s', 'tree4s'));
     }
 
-    public function inactive()
+    public function inactive(Request $request)
     {
         $user = auth()->user();
         $tree4s = Tree4::where('tree3_code', 1205)->where('status', 0);
@@ -48,39 +59,40 @@ class ClientsController extends Controller
         }
 
         $tree3s = Tree3::all();
+
+        if ($request->id !== null) {
+            $notfiy = Notification::findOrFail($request->id);
+            $notfiy->read = true;
+            $notfiy->save();
+        }
         return view('clients.inactive', compact('tree3s', 'tree4s'));
     }
 
-    public function create()
+    public function create(Request $request): View
     {
+        if ($request->id !== null) {
+            $notfiy = Notification::findOrFail($request->id);
+            $notfiy->read = true;
+            $notfiy->save();
+        }
         return view('clients.create');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function search():View
+    public function search(): View
     {
-        $tree4s = Tree4::where('tree3_code', 1205)->where('status', 1);
-        if (Auth::user()->roles_name == 'owner') {
-            $tree4s = $tree4s->get();
-        }else if (Auth::user()->roles_name == 'agent') {
-            $tree4s = $tree4s->where('user_id', Auth::id())->get();
-        }
-
-        return view('clients.index', compact('tree4s'));
+        return view('clients.index');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function store(StoreClientRequest $request)
+    public function store(StoreClientRequest $request): RedirectResponse
     {
         try {
+            if (Auth::user()->roles_name == 'user') {
+                $check_user = Tree4::where('user_id', Auth::id())->exists();
+                if ($check_user) {
+                    return redirect()->back()->with('error', 'عفوا، لا يمكنك اضافة عميل جديد حيث أنك تمتلك مستخدم أخر.');
+                }
+            }
+
             // Begin transaction
             DB::beginTransaction();
 
@@ -100,7 +112,7 @@ class ClientsController extends Controller
             }
 
             // Check role and set status
-            if (Auth::user()->roles_name == 'user') {
+            if (Auth::user()->roles_name != 'owner') {
                 $tree4->status = 0;
             } else {
                 $tree4->status = 1;
@@ -120,6 +132,35 @@ class ClientsController extends Controller
 
             // Save Tree4 entry
             $tree4->save();
+
+            if (Auth::user()->roles_name == 'agent') {
+                foreach (User::where('roles_name', 'owner')->get() as $admin) {
+                    // حفظ الإشعار في قاعدة البيانات
+                    Notification::create([
+                        'user_id' => $admin->id,
+                        'title' => 'ادخال ' . $request->type,
+                        'url' => 'Clients.inactive',
+                        'item_id' => $tree4->id,
+                        'message' => 'الوكيل ' . Auth::user()->name . ' قام بإدخال ' . $request->type . ' جديد.',
+                    ]);
+                }
+            }
+
+            if (Auth::user()->roles_name == 'user') {
+                foreach (User::where('roles_name', 'owner')->get() as $admin) {
+                    Notification::create([
+                        'user_id' => $admin->id,
+                        'title' => 'ادخال ' . $request->type,
+                        'url' => 'Clients.inactive',
+                        'item_id' => $tree4->id,
+                        'message' => 'لقد قام  ' . Auth::user()->name . 'بادخال بياناته ك' . $request->type,
+                    ]);
+                }
+            }
+
+            // if (Auth::user()->roles_name == 'agent') {
+            //     Mail::to('mohand10959@gmail.com')->send(new AgentAddClientEmail($tree4, Auth::user()->name));
+            // }
 
             // Commit transaction
             DB::commit();
@@ -146,19 +187,13 @@ class ClientsController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show(Request $request)
     {
         $start = $request->start;
         $end = $request->end;
         $name = $request->tree4;
         $Madin = Operation::where('Madin', $request->tree4)
-            ->whereDate('created_at','>=',$request->start)
+            ->whereDate('created_at', '>=', $request->start)
             ->whereDate('created_at', '<=', $request->end)
             ->orderBy('id', 'DESC')
             ->get();
@@ -173,23 +208,6 @@ class ClientsController extends Controller
         return view('clients.show', compact('Madin', 'Dain', 'start', 'end', 'name', 'id'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request)
     {
         // Validate the form data
@@ -235,12 +253,6 @@ class ClientsController extends Controller
         return redirect()->route('Clients.index');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Request $request)
     {
         $request->validate(
@@ -265,6 +277,25 @@ class ClientsController extends Controller
         $tree4->status = !$tree4->status;
         $tree4->save();
 
+        $agent = $tree4->user;
+        if ($agent->roles_name == 'agent') {
+            Notification::create([
+                'title' => 'تقعيل ' . $tree4->type,
+                'message' => 'لقد قام الادمن ' . Auth::user()->name . ' بتفعيل ' . $tree4->type . ' ' . $tree4->tree4_name . ' يرجى متابعة بقية الاحراءات له',
+                'url' => 'Clients.index',
+                'user_id' => $agent->id,
+                'item_id' => $tree4->id,
+            ]);
+        } elseif ($agent->roles_name == 'user') {
+            Notification::create([
+                'title' => 'تقعيل ' . $tree4->type,
+                'message' => 'لقد قام الادمن ' . Auth::user()->name . ' بتفعيل بياناتك ',
+                'url' => 'Clients.create',
+                'user_id' => $agent->id,
+                'item_id' => $tree4->id,
+            ]);
+        }
+
         return response()->json(['status' => $tree4->status]);
     }
 
@@ -285,5 +316,32 @@ class ClientsController extends Controller
         $Madin = Operation::where('Madin', $tree4_code)->orderBy('id', 'DESC')->get();
         $Dain = Operation::where('Dain', $tree4_code)->orderBy('id', 'DESC')->get();
         return view('clients.my_statment', compact('Madin', 'Dain'));
+    }
+
+    public function getStatement(Request $request)
+    {
+        $search = $request->get('q');
+        $query = Tree4::query()
+            ->where('tree3_code', 1205)
+            ->where('status', 1)
+            ->when($search, function ($query) use ($search) {
+                $query->where('tree4_name', 'like', '%' . $search . '%');
+            });
+
+        if (Auth::user()->roles_name == 'owner') {
+            // لا حاجة لاستخدام get() هنا، لأنها مجموعة بيانات بالفعل
+            $tree4 = $query->get(); // عرض جميع البيانات
+        } elseif (Auth::user()->roles_name == 'agent') {
+            $tree4 = $query->where('user_id', Auth::id())->get(); // عرض البيانات التي أضافها المستخدم فقط
+        }
+
+        $formattedResults = $tree4->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'text' => $item->tree4_name, // الحقل الذي سيظهر في Select2
+            ];
+        });
+
+        return response()->json($formattedResults);
     }
 }

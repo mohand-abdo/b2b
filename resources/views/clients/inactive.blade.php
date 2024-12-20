@@ -10,6 +10,13 @@
     <link href="{{ URL::asset('assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet">
     <!--Internal   Notify -->
     <link href="{{ URL::asset('assets/plugins/notify/css/notifIt.css') }}" rel="stylesheet" />
+    <style>
+        .highlighted {
+            background-color: #dfdf0b !important;
+            /* لون مميز */
+            font-weight: bold;
+        }
+    </style>
 @endsection
 
 @section('page-header')
@@ -19,7 +26,7 @@
             <div class="d-flex">
                 <h5 class="content-title mb-0 my-auto"> الحجاج / المعتمرين</h5><span
                     class="text-muted mt-1 tx-13 mr-2 mb-0">/
-                     قائمة الحجاج / المعتمرين غير النشطين</span>
+                    قائمة الحجاج / المعتمرين غير النشطين</span>
             </div>
         </div>
     </div>
@@ -103,11 +110,11 @@
                             </thead>
                             <tbody>
                                 @foreach ($tree4s as $tree)
-                                    <tr>
-                                        <td></td>
-                                       <td>
-                    <a href="{{ route('file.show', $tree->id) }}">{{ $tree->tree4_name }}</a>
-                </td>
+                                    <tr id="row-{{ $tree->id }}">
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>
+                                            <a href="{{ route('file.show', $tree->id) }}">{{ $tree->tree4_name }}</a>
+                                        </td>
                                         <td>{{ $tree->iden }}</td>
                                         <td>{{ $tree->phone }}</td>
                                         <td>{{ $tree->email }}</td>
@@ -363,7 +370,7 @@
             modal.find('.modal-body #type').val(type);
 
         });
-    
+
         $('#modaldemo5').on('show.bs.modal', function(event) {
             var button = $(event.relatedTarget)
             var id = button.data('id')
@@ -378,7 +385,7 @@
             modal.find('.modal-body #tree4_name').val(tree4_name);
 
         });
-    
+
         $('#attachmentModal').on('show.bs.modal', function(event) {
             var button = $(event.relatedTarget)
             var id = button.data('id')
@@ -388,31 +395,36 @@
         });
 
         $('.toggle-status-btn').click(function() {
-                var treeId = $(this).data('id');
-                console.log(treeId);
-                var button = $(this);
+            var treeId = $(this).data('id');
+            console.log(treeId);
+            var button = $(this);
 
-                $.ajax({
-                    type: 'POST',
-                    url: '{{ route('Clients.toggleStatus', '') }}/' + treeId,
-                    data: {
-                        _token: '{{ csrf_token() }}'
-                    },
-                    success: function(response) {
-                        button.toggleClass('btn-success btn-danger');
-                        button.text(response.status ? 'نشط' : 'غير نشط');
-                        notif({
-                            msg: 'تم تغيير حالة الحملة بنجاح',
-                            type: 'success'
-                        });
-                    },
-                    error: function() {
-                        notif({
-                            msg: 'حدث خطأ أثناء تغيير الحالة',
-                            type: 'error'
-                        });
-                    }
-                });
+            $.ajax({
+                type: 'POST',
+                url: '{{ route('Clients.toggleStatus', '') }}/' + treeId,
+                data: {
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    button.toggleClass('btn-success btn-danger');
+                    button.text(response.status ? 'نشط' : 'غير نشط');
+                    notif({
+                        msg: 'تم تغيير حالة الحملة بنجاح',
+                        type: 'success'
+                    });
+                },
+                error: function() {
+                    notif({
+                        msg: 'حدث خطأ أثناء تغيير الحالة',
+                        type: 'error'
+                    });
+                }
             });
+        });
+  
+
+
+        
+
     </script>
 @endsection

@@ -110,9 +110,10 @@
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td class="text-center">
-                                            <a href="{{ asset('image/file/'.$file->file) }}" data-lightbox="{{ $file->name }}" data-title="{{ $file->name }}" >
-                                            <img src="{{ asset('image/file/' . $file->file) }}" alt="صورة مصغرة"
-                                                width="100">
+                                            <a href="{{ asset('image/file/' . $file->file) }}"
+                                                data-lightbox="{{ $file->name }}" data-title="{{ $file->name }}">
+                                                <img src="{{ asset('image/file/' . $file->file) }}" alt="صورة مصغرة"
+                                                    width="100">
                                             </a>
                                         </td>
                                         <td>{{ $file->name }}</td>
@@ -127,16 +128,20 @@
                                                 <i class="fa fa-edit"></i>
                                             </a>
                                             <a class="modal-effect btn btn-outline-danger btn-sm" data-target="#modaldemo5"
-                                                data-toggle="modal" href="#modaldemo5" data-id="{{ $file->id }}" title="حذف ">
+                                                data-toggle="modal" href="#modaldemo5" data-id="{{ $file->id }}"
+                                                title="حذف ">
                                                 <i class="fa fa-trash"></i>
                                             </a>
                                             {{-- @can('إضافة مرفقات') --}}
-                                            <a class=" btn btn-outline-info btn-sm"  href="{{ asset('image/file/'.$file->file) }}" data-lightbox="{{ $file->name }}" data-title="{{ $file->name }}" >
+                                            <a class=" btn btn-outline-info btn-sm"
+                                                href="{{ asset('image/file/' . $file->file) }}"
+                                                data-lightbox="example-set" data-title="{{ $file->name }}">
                                                 <i class="fa fa-eye"></i>
                                             </a>
-                                            <a href="{{ asset('image/file/' . $file->file) }}"  class=" btn btn-outline-primary btn-sm" title="تنزيل الصورة"  download >
-                                        <i class="fas fa-download"></i>
-                                    </a>
+                                            <a href="{{ asset('image/file/' . $file->file) }}"
+                                                class=" btn btn-outline-primary btn-sm" title="تنزيل الصورة" download>
+                                                <i class="fas fa-download"></i>
+                                            </a>
                                             {{-- @endcan --}}
                                         </td>
 
@@ -188,8 +193,7 @@
                     @csrf
                     <div class="modal-body">
                         @if (Auth::user()->roles_name == 'user')
-                        <input type="hidden" name="tree4_id" id="id" value="{{ $tree4Id }}">
-                            
+                            <input type="hidden" name="tree4_id" id="id" value="{{ $tree4Id }}">
                         @elseif (Auth::user()->roles_name == 'agent')
                             <div class="form-group">
                                 <label for="tree4_id">الحاج / المعتمر</label>
@@ -250,7 +254,7 @@
                             <label for="attachments">اختر المرفقات:</label>
                             <input type="file" id="file" name="file" class="form-control">
                             <br />
-                            <img src="#" id="imagePreview" alt="image" width="150"/>
+                            <img src="#" id="imagePreview" alt="image" width="150" />
                         </div>
                         <div id="attachmentList"></div>
                     </div>

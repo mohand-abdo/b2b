@@ -36,10 +36,7 @@ class ContractController extends Controller
     public function create()
     {
         $tree4s = Tree4::whereIn('tree3_code', [1202, 1203])->get();
-        $campaigns = Campaigns::where('status', 1)->get();
-        $tree4 = Tree4::where('tree3_code', 1205)->where('status', 1)->get();
-
-        return view('contract.contract', compact('tree4s', 'campaigns', 'tree4'));
+        return view('contract.contract', compact('tree4s'));
     }
 
     /**
@@ -168,11 +165,9 @@ class ContractController extends Controller
 public function edit($id)
 {
     $contract = Contract::findOrFail($id); // Find the contract by ID
-    $tree4 = Tree4::all(); // Fetch all available Hajjs
-    $campaigns = Campaigns::all(); // Fetch all available campaigns
     $tree4s = Tree4::all(); // Fetch all available banks and safes
 
-    return view('contract.edit', compact('contract', 'tree4', 'campaigns', 'tree4s'));
+    return view('contract.edit', compact('contract',  'tree4s'));
 }
 
    /**

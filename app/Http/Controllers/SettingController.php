@@ -88,6 +88,8 @@ class SettingController extends Controller
         $setting->location = $request->location;
         $setting->phone = $request->phone;
         $setting->email = $request->email;
+        $setting->no_khartoum = $request->no_khartoum;
+        $setting->no_faisal = $request->no_faisal;
         $setting->conditions = $request->conditions;
         $setting->save();
         session()->flash('Add');
