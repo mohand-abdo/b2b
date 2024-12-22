@@ -99,6 +99,9 @@
                             <thead>
                                 <tr>
                                     <th class="wd-1p border-bottom-0" width="5%">م</th>
+                                    @if (Auth::user()->roles_name == 'agent')
+                                        <th class="wd-15p border-bottom-0" width="7%">الاسم</th>
+                                    @endif
                                     <th class="wd-15p border-bottom-0" width="7%">الصورة</th>
                                     <th class="wd-10p border-bottom-0"> الإسم</th>
                                     <th class="wd-10p border-bottom-0"> التاريخ </th>
@@ -109,6 +112,9 @@
                                 @foreach ($files as $file)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
+                                        @if (Auth::user()->roles_name == 'agent')
+                                            <td>{{ $file->tree4->tree4_name }}</td>  
+                                        @endif
                                         <td class="text-center">
                                             <a href="{{ asset('image/file/' . $file->file) }}"
                                                 data-lightbox="{{ $file->name }}" data-title="{{ $file->name }}">
@@ -134,8 +140,8 @@
                                             </a>
                                             {{-- @can('إضافة مرفقات') --}}
                                             <a class=" btn btn-outline-info btn-sm"
-                                                href="{{ asset('image/file/' . $file->file) }}"
-                                                data-lightbox="example-set" data-title="{{ $file->name }}">
+                                                href="{{ asset('image/file/' . $file->file) }}" data-lightbox="example-set"
+                                                data-title="{{ $file->name }}">
                                                 <i class="fa fa-eye"></i>
                                             </a>
                                             <a href="{{ asset('image/file/' . $file->file) }}"
@@ -196,7 +202,7 @@
                             <input type="hidden" name="tree4_id" id="id" value="{{ $tree4Id }}">
                         @elseif (Auth::user()->roles_name == 'agent')
                             <div class="form-group">
-                                <label for="tree4_id">الحاج / المعتمر</label>
+                                <span class="tx-danger">*</span><label for="tree4_id">الحاج / المعتمر</label>
                                 <select name="tree4_id" class="form-control" required>
                                     <option value="">-- اختر الحاج / المعتمر --</option>
                                     @foreach ($tree4Id as $tree4)
@@ -208,11 +214,11 @@
 
                         {{-- file_name --}}
                         <div class="form-group">
-                            <label for="attachments"> اسم المرفق</label>
+                            <span class="tx-danger">*</span><label for="attachments"> اسم المرفق</label>
                             <input type="text" name="name" class="form-control" required>
                         </div>
                         <div class="form-group">
-                            <label for="attachments">اختر المرفقات:</label>
+                            <span class="tx-danger">*</span><label for="attachments">اختر المرفقات:</label>
                             <input type="file" name="file" class="form-control" required>
 
                         </div>
@@ -242,12 +248,12 @@
                     @csrf
                     @method('PUT')
                     <div class="modal-body">
-                        <input type="hidden" name="tree4_id" value="{{ $tree4Id }}">
+                        <input type="hidden" name="tree4_id" value="{{ Auth::user()->roles_name == 'roles_name' ?  $tree4Id[0]->id : $tree4Id }}">
                         <input type="hidden" name="id" id="id">
 
                         {{-- file_name --}}
                         <div class="form-group">
-                            <label for="attachments"> اسم المرفق</label>
+                            <span class="tx-danger">*</span><label for="attachments"> اسم المرفق</label>
                             <input type="text" id="name" name="name" class="form-control" required>
                         </div>
                         <div class="form-group">

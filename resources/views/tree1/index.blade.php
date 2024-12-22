@@ -70,7 +70,7 @@
                         @csrf
                         <div class="row">
                             <div class="col">
-                                <label for="inputName" class="control-label"> إسم الحساب</label>
+                                <span class="tx-danger">*</span><label for="inputName" class="control-label"> إسم الحساب</label>
                                 <input type="text" name="tree1_name" class="form-control" title="يرجي ادخال إسم الحساب" required>
                             </div>
                         </div>
@@ -133,7 +133,7 @@
                     {{csrf_field()}}
                     <div class="modal-body"
                         <div class="form-group">
-                            <label for="inputName" class="control-label"> إسم الحساب</label>
+                            <span class="tx-danger">*</span><label for="inputName" class="control-label"> إسم الحساب</label>
                             <input type="hidden" id="id" name="id" class="form-control">
                             <input type="text" name="tree1_name" id="tree1_name" class="form-control" title="يرجي ادخال إسم الحساب" required>
                         </div>

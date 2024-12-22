@@ -108,15 +108,23 @@ class UserController extends Controller
             'email' => $request->email,
             'phone_number' => $request->phone_number,
             'Status' => $request->Status, // لاحظ أن الحقل يكتب بأحرف صغيرة إذا كان اسم العمود كذلك
+            'roles_name' => $request->roles, // لاحظ أن الحقل يكتب بأحرف صغيرة إذا كان اسم العمود كذلك
         ]);
 
         if ($request->filled('password')) {
             // التحقق مما إذا كانت كلمة المرور مملوءة فقط
             $user->update(['password' => Hash::make($request->password)]);
         }
+ // **1. إزالة جميع الأدوار القديمة**
+    $user->syncRoles([]);
 
-        DB::table('model_has_roles')->where('model_id', $id)->delete();
-        $user->assignRole($request->input('roles'));
+    if (!empty($request->roles)) {
+        $user->assignRole($request->roles);
+    }
+
+    
+        // DB::table('model_has_roles')->where('model_id', $id)->delete();
+        // $user->assignRole($request->input('roles'));
         return redirect()->route('users.index')->with('success', 'تم تحديث بيانات المستخدم بنجاح');
     }
     /**

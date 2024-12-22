@@ -7,6 +7,7 @@ use App\Models\Operation;
 use App\Models\Tree4;
 use App\Models\Restrictions;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
 class BalanceController extends Controller
 {
@@ -15,12 +16,11 @@ class BalanceController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index():View
     {
-        $tree4 = Tree4::all();
         $daily = Operation::where('type', 3)->get();
         $id = 1;
-        return view('balance.index', compact('tree4', 'daily', 'id'));
+        return view('balance.index', compact( 'daily', 'id'));
     }
 
     /**

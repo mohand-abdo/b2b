@@ -7,7 +7,7 @@
     <link href="{{ URL::asset('assets/plugins/datatable/css/responsive.bootstrap4.min.css') }}" rel="stylesheet" />
     <link href="{{ URL::asset('assets/plugins/datatable/css/jquery.dataTables.min.css') }}" rel="stylesheet">
     <link href="{{ URL::asset('assets/plugins/datatable/css/responsive.dataTables.min.css') }}" rel="stylesheet">
-    {{-- <link href="{{ URL::asset('assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet"> --}}
+    <link href="{{ URL::asset('assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet">
     <!-- Internal Notify -->
     <link href="{{ URL::asset('assets/plugins/notify/css/notifIt.css') }}" rel="stylesheet" />
     <!-- Print styles -->
@@ -160,13 +160,8 @@
                         <input type="hidden" name="campaign_id" value="{{ request('campaign') }}">
                         <div class="modal-body">
                             <div class="form-group">
-                                <label for="tree4_id">الحاج / المعتمر</label>
-                                <select name="tree4_id" class="form-control" required>
-                                    <option value="">-- اختر الحاج / المعتمر --</option>
-                                    @foreach ($tree4 as $x)
-                                        <option value="{{ $x->id }}">{{ $x->tree4_name }}</option>
-                                    @endforeach
-                                </select>
+                                <span class="tx-danger">*</span><label for="tree4_id">الحاج / المعتمر</label>
+                                    <select required name="tree4_id" class="form-control select2" style="width: 100%"></select>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -230,8 +225,6 @@
     <script>
         $(document).ready(function() {
             $('#example1').DataTable();
-
-            $('#tree4_id').select2();
 
             $('#modaldemo5').on('show.bs.modal', function(event) {
                 var button = $(event.relatedTarget);
@@ -330,5 +323,42 @@
             printWindow.focus();
             printWindow.print();
         }
+
+        function select2list(selector, url, placeholder) {
+            $(selector).select2({
+                language: {
+                    inputTooShort: function() {
+                        return 'ادخل حرف واحد على الاقل';
+                    }
+                },
+                ajax: {
+                    url: url,
+                    dataType: 'json',
+                    delay: 100,
+                    data: function(params) {
+                        return {
+                            q: params.term,
+                            page: params.page
+                        };
+                    },
+                    processResults: function(data, params) {
+                        console.log(data);
+                        params.page = params.page || 1;
+                        return {
+                            results: data,
+                            pagination: {
+                                more: ((data.total_count) > (params.page * 20))
+                            }
+                        };
+                    },
+                    cache: true
+                },
+                placeholder: placeholder,
+                minimumInputLength: 1,
+            });
+
+        };
+
+        select2list(".select2", "{{ route('select2.getStatement') }}", "يرجى إدخال العميل");
     </script>
 @endsection

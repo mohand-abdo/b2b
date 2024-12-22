@@ -13,15 +13,8 @@ class PlusController extends Controller
     public function index()
     {
         $pluses = Plus::with('stage')->get();
-        $tree4 = Tree4::where('tree3_code', 1205)->where('status', 1);
-        if (Auth::user()->roles_name == 'owner') {
-            $tree4 = $tree4->get();
-        } elseif (Auth::user()->roles_name == 'agent') {
-            $tree4 = $tree4->where('user_id', Auth::id())->get();
-        }
-
         // Assuming tree4 is coming from the stages
-        return view('plus.index', compact('pluses', 'tree4'));
+        return view('plus.index', compact('pluses'));
     }
 
     public function store(Request $request)

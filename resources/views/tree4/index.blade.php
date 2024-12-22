@@ -7,7 +7,6 @@
 <link href="{{URL::asset('assets/plugins/datatable/css/jquery.dataTables.min.css')}}" rel="stylesheet">
 <link href="{{URL::asset('assets/plugins/datatable/css/responsive.dataTables.min.css')}}" rel="stylesheet">
 <link href="{{URL::asset('assets/plugins/select2/css/select2.min.css')}}" rel="stylesheet">
-<link href="{{URL::asset('assets/plugins/select2/css/select2.min.css')}}" rel="stylesheet">
 <!--Internal   Notify -->
 <link href="{{URL::asset('assets/plugins/notify/css/notifIt.css')}}" rel="stylesheet" />
 @endsection
@@ -81,8 +80,8 @@
                             @csrf
                             <div class="row">
                                 <div class="col">
-                                    <label> الحساب الرئيسي</label>
-                                    <select required name="tree3_code" class="form-control">
+                                    <span class="tx-danger">*</span><label> الحساب الرئيسي</label>
+                                    <select required name="tree3_code" class="form-control select2">
                                         @foreach ($tree3s as $tree3)
                                         <option value="{{$tree3->tree3_code}}">{{$tree3->tree3_name}}</option>
                                         @endforeach
@@ -90,7 +89,7 @@
                                 </div>
                                 </br>
                                 <div class="col">
-                                    <label for="inputName" class="control-label"> إسم الحساب</label>
+                                    <span class="tx-danger">*</span><label for="inputName" class="control-label"> إسم الحساب</label>
                                     <input type="text" name="tree4_name" class="form-control" title="يرجي ادخال إسم الحساب" required>
                                 </div>
                             </div>
@@ -161,7 +160,7 @@
                             <input disabled class="form-control" id="tree3_name">
                         </div>
                         <div class="form-group">
-                            <label>اسم الحساب</label>
+                            <span class="tx-danger">*</span><label>اسم الحساب</label>
                             <input id="tree4_name" required type="text" name="tree4_name" class="form-control">
                         </div>
                         <div class="modal-footer">
@@ -240,10 +239,8 @@
         modal.find('.modal-body #tree4_code').val(tree4_code);
         modal.find('.modal-body #tree4_name').val(tree4_name);
 
-    })
+    });
 
-</script>
-<script>
     $('#modaldemo5').on('show.bs.modal', function(event) {
         var button = $(event.relatedTarget)
         var id = button.data('id')
@@ -257,7 +254,9 @@
         modal.find('.modal-body #tree4_code').val(tree4_code);
         modal.find('.modal-body #tree4_name').val(tree4_name);
 
-    })
+    });
+
+    $('.select2').select2();
 
 </script>
 @endsection

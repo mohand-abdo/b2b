@@ -15,8 +15,7 @@ class StatementController extends Controller
      */
     public function index()
     {
-        $tree4s = Tree4::all();
-        return view('statement.index', compact('tree4s'));
+        return view('statement.index');
     }
 
     /**

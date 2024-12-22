@@ -69,16 +69,16 @@
                         <div class="row">
                         
                             <div class="col-md-4">
-                                <label>الحاج او المعتمر</label>
+                                <span class="tx-danger">*</span><label>الحاج او المعتمر</label>
                                 <select id="tree4_id" name="tree4_id" class="form-control tree4" required></select>
                             </div>
 
                             <div class="col-md-4">
-                                <label>حملات الحج والعمرة</label>
+                                <span class="tx-danger">*</span><label>حملات الحج والعمرة</label>
                                 <select id="campaign_id" name="campaign_id" class="form-control campaign" required></select>
                             </div>
                             <div class="col-md-4">
-                                <label> الحساب</label>
+                                <span class="tx-danger">*</span><label> الحساب</label>
                                 <select id="live_bank_and_safe" required name="bank_and_safe" class="form-control nice-select">
                                     <option value=""> -- اختر الحساب --</option>
 
@@ -94,22 +94,22 @@
                         <!-- Row 2 -->
                         <div class="row">
                             <div class="col-md-2">
-                                <label>رقم الحاج / المعتمر </label>
+                                <span class="tx-danger">*</span><label>رقم الحاج / المعتمر </label>
                                 <input type="text" name="hajj_number" class="form-control" required>
                             </div>
 
                             <div class="col-md-2">
-                                <label>رقم الغرفة</label>
+                                <span class="tx-danger">*</span><label>رقم الغرفة</label>
                                 <input type="text" name="room_number" class="form-control" required>
                             </div>
 
                             <div class="col-md-2">
-                                <label>رقم الحافلة</label>
+                                <span class="tx-danger">*</span><label>رقم الحافلة</label>
                                 <input type="text" name="bus_number" class="form-control" required>
                             </div>
 
                             <div class="col-md-6">
-                                <label>مرفق</label>
+                                <span class="tx-danger">*</span><label>مرفق</label>
                                 <input type="file" name="attachment" class="form-control">
                             </div>
                         </div>
@@ -119,23 +119,23 @@
                         <!-- Row 3 -->
                         <div class="row">
                             <div class="col-md-3">
-                                <label>المبلغ</label>
+                                <span class="tx-danger">*</span><label>المبلغ</label>
                                 <input type="text" id="amount" name="amount" class="form-control" required>
                             </div>
 
                             <div class="col-md-3">
-                                <label>الضريبة (%)</label>
+                                <span class="tx-danger">*</span><label>الضريبة (%)</label>
                                 <input type="text" id="tax" name="tax" class="form-control" required>
                             </div>
 
                             <div class="col-md-3">
-                                <label>المبلغ شامل الضريبة</label>
+                                <span class="tx-danger">*</span><label>المبلغ شامل الضريبة</label>
                                 <input type="text" id="total_amount" name="total_amount" class="form-control" readonly
                                     required>
                             </div>
 
                             <div class="col-md-3">
-                                <label>تاريخ العقد</label>
+                                <span class="tx-danger">*</span><label>تاريخ العقد</label>
                                 <input type="date" name="contract_date" class="form-control datepicker" required>
                             </div>
                         </div>
@@ -145,8 +145,8 @@
                         <!-- Row 4 -->
                         <div class="row">
                             <div class="col-md-12">
-                                <label>شروط العقد</label>
-                                <textarea name="contract_terms" class="form-control" id="ckeditor" rows="3">{{Helper::GeneralSiteSettings('conditions')}}</textarea>
+                                <span class="tx-danger">*</span><label>شروط العقد</label>
+                                <textarea name="contract_terms" class="form-control" id="ckeditor" rows="3" required>{{Helper::GeneralSiteSettings('conditions')}}</textarea>
                             </div>
                         </div>
 

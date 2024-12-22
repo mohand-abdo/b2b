@@ -59,18 +59,18 @@
                         <div class="row">
                             {{--  <input type="hidden" class="form-control" value="{{$setting->id }}" id="inputName" name="id" title="يرجي ادخال إسم الـمؤسسة" required>  --}}
                             <div class="col">
-                                <label for="inputName" class="control-label"> إسم الشركة </label>
+                                <span class="tx-danger">*</span><label for="inputName" class="control-label"> إسم الشركة </label>
                                 <input type="text" class="form-control" value="{{ $setting->name }}" id="inputName"
                                     name="name" title="يرجي ادخال إسم الـمؤسسة" required>
                             </div>
 
                             {{-- <div class="col">
-                            <label>رقم السجل التجاري  </label>
+                            <span class="tx-danger">*</span><label>رقم السجل التجاري  </label>
                             <input class="form-control " name="section" type="text" value="{{$setting->section}}" required title="يرجي ادخال السجل التجاري">
                         </div> --}}
 
                             <div class="col">
-                                <label> العنوان</label>
+                                <span class="tx-danger">*</span><label> العنوان</label>
                                 <input class="form-control" name="location" value="{{ $setting->location }}"
                                     title="يرجي ادخال العنوان " type="text" required>
                             </div>
@@ -80,13 +80,13 @@
                         {{-- 2 --}}
                         <div class="row">
                             <div class="col">
-                                <label for="inputName" class="control-label"> هاتف </label>
+                                <span class="tx-danger">*</span><label for="inputName" class="control-label"> هاتف </label>
                                 <input type="text" class="form-control" id="inputName" name="phone"
                                     value="{{ $setting->phone }}" title="يرجي ادخال رقم الهاتف" required>
                             </div>
 
                             <div class="col">
-                                <label> البريد الإلكتروني</label>
+                                <span class="tx-danger">*</span><label> البريد الإلكتروني</label>
                                 <input class="form-control " name="email" value="{{ $setting->email }}" type="text"
                                     value="" required title="يرجي ادخال الإيميل ">
                             </div>
@@ -96,13 +96,13 @@
 
                         <div class="row">
                             <div class="col">
-                                <label for="bankak" class="control-label"> رقم بنكك </label>
+                                <span class="tx-danger">*</span><label for="bankak" class="control-label"> رقم بنكك </label>
                                 <input type="text" class="form-control" id="bankak" name="no_khartoum"
                                     value="{{ $setting->no_khartoum }}" title="يرجي ادخال رقم بنكك" required>
                             </div>
 
                             <div class="col">
-                                <label>رقم فوري</label>
+                                <span class="tx-danger">*</span><label>رقم فوري</label>
                                 <input class="form-control " name="no_faisal" value="{{ $setting->no_faisal }}" type="text"
                                     value="" required title="يرجي ادخال رقم فوري ">
                             </div>
@@ -121,7 +121,7 @@
                         </br>
                         <div class="row">
                             <div class="col">
-                                <label> شروط العقد</label>
+                                <span class="tx-danger">*</span><label> شروط العقد</label>
                                 <textarea class="form-control" id="conditions" name="conditions" required>{{ $setting->conditions }}</textarea>
                             </div>
                               <script>
@@ -132,8 +132,8 @@
                         {{-- show logo  --}}
                         {{-- 4 --}}
                         <br>
-                        <p class="text-danger">* صيغة الشعـار &nbsp; jpeg ,.jpg , png </p>
-                        <h5 class="card-title">الشعـار</h5>
+                        <p >صيغة الشعـار &nbsp; jpeg ,.jpg , png </p>
+                        <span class="tx-danger">*</span><label class="card-title">الشعـار</label>
 
                         <div class="col-sm-12 col-md-12">
                             <input type="file" name="logo" class="dropify"

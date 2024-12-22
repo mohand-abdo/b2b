@@ -20,9 +20,9 @@ class StagesController extends Controller
             $stages = Stages::where('user_id', Auth::id())->get();
         }
 
-        $campaigns = Campaigns::where('status', 1)->get();
+        // $campaigns = Campaigns::where('status', 1)->get();
 
-        return view('stages.index', compact('campaigns', 'stages'));
+        return view('stages.index', compact('stages'));
     }
 
     public function store(Request $request): RedirectResponse
@@ -33,6 +33,7 @@ class StagesController extends Controller
         ]);
         $exists = Stages::where('campaign_id', $request->campaign_id)
             ->where('stage', $request->stage)
+            ->where('user_id', Auth::id())
             ->exists();
 
         if ($exists) {
@@ -92,48 +93,60 @@ class StagesController extends Controller
         $start = $request->start;
         $end = $request->end;
         $name = Campaigns::findOrFail($request->campaign)->name;
-        $Madin = Operation::with('plus')->whereHas('plus', callback: function ($query) use ($request) {
-            $query->where('campaign_id', $request->campaign); // الشرط بناءً على campaign_id
-        })
+        $Madin = Operation::with('plus')
+            ->whereHas(
+                'plus',
+                callback: function ($query) use ($request) {
+                    $query->where('campaign_id', $request->campaign); // الشرط بناءً على campaign_id
+                },
+            )
             ->whereDate('created_at', '>=', $request->start)
             ->whereDate('created_at', '<=', $request->end)
             ->orderBy('id', 'DESC')
             ->where('Madin', 'like', '1205%');
-            if(Auth::user()->roles_name == 'owner'){
-                $Madin = $Madin->get();
-            }elseif(Auth::user()->roles_name == 'agent'){
-                $Madin = $Madin->where('user_id', Auth::id())->get();
-            }
+        if (Auth::user()->roles_name == 'owner') {
+            $Madin = $Madin->get();
+        } elseif (Auth::user()->roles_name == 'agent') {
+            $Madin = $Madin->where('user_id', Auth::id())->get();
+        }
 
-            $Dain = Operation::with('plus')->whereHas('plus', callback: function ($query) use ($request) {
-            $query->where('campaign_id', $request->campaign); // الشرط بناءً على campaign_id
-        })
+        $Dain = Operation::with('plus')
+            ->whereHas(
+                'plus',
+                callback: function ($query) use ($request) {
+                    $query->where('campaign_id', $request->campaign); // الشرط بناءً على campaign_id
+                },
+            )
             ->whereDate('created_at', '>=', $request->start)
             ->whereDate('created_at', '<=', $request->end)
             ->orderBy('id', 'DESC')
             ->where('Dain', 'like', '1205%');
-            if(Auth::user()->roles_name == 'owner'){
-                $Dain = $Dain->get();
-            }elseif(Auth::user()->roles_name == 'agent'){
-                $Dain = $Dain->where('user_id', Auth::id())->get();
-            }
+        if (Auth::user()->roles_name == 'owner') {
+            $Dain = $Dain->get();
+        } elseif (Auth::user()->roles_name == 'agent') {
+            $Dain = $Dain->where('user_id', Auth::id())->get();
+        }
 
-        return view('stages.show', compact('Madin','Dain','name', 'start', 'end'));
+        return view('stages.show', compact('Madin', 'Dain', 'name', 'start', 'end'));
     }
 
     public function getCampaign(Request $request)
     {
         $search = $request->get('q');
-        $campaigns = Campaigns::where('status', 1)->
-            where('name', 'LIKE', '%'. $search. '%')->get();
+        if ($search != null) {
+            $campaigns = Campaigns::where('status', 1);
+            if($search != null) {
+                $campaigns = $campaigns->where('name', 'LIKE', '%'. $search. '%')->get();
+            }
+                
             $formattedResults = $campaigns->map(function ($item) {
-            return [
-                'id' => $item->id,
-                'text' => $item->name, // الحقل الذي سيظهر في Select2
-            ];
-        });
+                return [
+                    'id' => $item->id,
+                    'text' => $item->name, // الحقل الذي سيظهر في Select2
+                ];
+            });
 
-
-        return response()->json($formattedResults);
+            return response()->json($formattedResults);
+        }
     }
 }

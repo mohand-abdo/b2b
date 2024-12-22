@@ -46199,7 +46199,9 @@ button.bg-dark:hover, button.bg-dark:focus {
   color: #fbbc0b; }
 
 .tx-danger {
-  color: #ee335e; }
+  color: #ee335e; 
+  margin-left: 8px;
+}
 
 .tx-info {
   color: #00b9ff; }

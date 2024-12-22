@@ -99,7 +99,7 @@ class ClientsController extends Controller
             // Create a new Tree4 entry
             $tree4 = new Tree4();
             $tree4->tree4_name = $request->tree4_name;
-            $tree4->tree3_code = 1205;
+            $tree4->tree3_code = 12;
             $tree4->iden = $request->iden;
             $tree4->phone = $request->phone;
             $tree4->email = $request->email;
@@ -302,11 +302,18 @@ class ClientsController extends Controller
     public function show_pic()
     {
         if (Auth::user()->roles_name == 'agent') {
-            $tree4Id = Tree4::where('user_id', Auth::id())->get();
+            $tree4Id = Tree4::select('id')->where('user_id', Auth::id())->get();
+            if ($tree4Id->count() > 0) {
+                $files = File::with('tree4')
+                    ->where('tree4_id', $tree4Id[0]->id)
+                    ->get();
+            } else {
+                $files = File::query();
+            }
         } else {
             $tree4Id = Tree4::where('user_id', Auth::id())->pluck('id')->first();
+            $files = File::where('tree4_id', $tree4Id)->get();
         }
-        $files = File::where('tree4_id', $tree4Id)->get();
         return view('clients.show_pic', compact('files', 'tree4Id'));
     }
 
@@ -321,27 +328,29 @@ class ClientsController extends Controller
     public function getStatement(Request $request)
     {
         $search = $request->get('q');
-        $query = Tree4::query()
-            ->where('tree3_code', 1205)
-            ->where('status', 1)
-            ->when($search, function ($query) use ($search) {
-                $query->where('tree4_name', 'like', '%' . $search . '%');
+        if ($search != '') {
+            $query = Tree4::query()
+                ->where('tree3_code', 1205)
+                ->where('status', 1)
+                ->when($search, function ($query) use ($search) {
+                    $query->where('tree4_name', 'like', '%' . $search . '%');
+                });
+
+            if (Auth::user()->roles_name == 'owner') {
+                // لا حاجة لاستخدام get() هنا، لأنها مجموعة بيانات بالفعل
+                $tree4 = $query->get(); // عرض جميع البيانات
+            } elseif (Auth::user()->roles_name == 'agent') {
+                $tree4 = $query->where('user_id', Auth::id())->get(); // عرض البيانات التي أضافها المستخدم فقط
+            }
+
+            $formattedResults = $tree4->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'text' => $item->tree4_name, // الحقل الذي سيظهر في Select2
+                ];
             });
 
-        if (Auth::user()->roles_name == 'owner') {
-            // لا حاجة لاستخدام get() هنا، لأنها مجموعة بيانات بالفعل
-            $tree4 = $query->get(); // عرض جميع البيانات
-        } elseif (Auth::user()->roles_name == 'agent') {
-            $tree4 = $query->where('user_id', Auth::id())->get(); // عرض البيانات التي أضافها المستخدم فقط
+            return response()->json($formattedResults);
         }
-
-        $formattedResults = $tree4->map(function ($item) {
-            return [
-                'id' => $item->id,
-                'text' => $item->tree4_name, // الحقل الذي سيظهر في Select2
-            ];
-        });
-
-        return response()->json($formattedResults);
     }
 }

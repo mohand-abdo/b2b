@@ -2,10 +2,7 @@
 @section('css')
 <!--- Internal Select2 css-->
     <link href="{{ URL::asset('assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet">
-    {{-- select2  --}}
-    <link href="{{URL::asset('assets/plugins/select2/css/select2.min.css')}}" rel="stylesheet">
-    <link href="{{URL::asset('assets/plugins/select2/css/select2.min.css')}}" rel="stylesheet">
-@livewireStyles
+    @livewireStyles
 @endsection
 
 @section('page-header')
@@ -41,29 +38,21 @@
                                    </div>
                               </div>
                             <div class="col">
-                                <label>  الحساب
-                                    <span class="required">*</span>
+                                <span class="tx-danger">*</span><label>  الحساب
                                 </label>
-                                <select required name="tree4" class="form-control" >
-                                    <option value=""  selected disabled>اختر الحساب </option>
-                                    @foreach ($tree4s as $tree4)
-                                    <option value="{{$tree4->tree4_code}}">{{$tree4->tree4_name}}</option>
-                                    @endforeach
-                                </select>
+                                <select required name="tree4" class="form-control select2" ></select>
                             </div>
 
                             </br>
                             <div class="row">
                                 <div class="col">
-                                    <label for="inputName" class="control-label"> تاريخ البداية
-                                        <span class="required">*</span>
+                                    <span class="tx-danger">*</span><label for="inputName" class="control-label"> تاريخ البداية
                                     </label>
                                     <input type="date" name="start" value="<?php echo date('Y-m-d'); ?>" class="form-control" required>
                                 </div>
                                 </br>
                                 <div class="col">
-                                    <label for="inputName" class="control-label"> تاريخ النهاية
-                                        <span class="required">*</span>
+                                    <span class="tx-danger">*</span><label for="inputName" class="control-label"> تاريخ النهاية
                                     </label>
                                     <input type="date" name="end" value="<?php echo date('Y-m-d'); ?>" class="form-control" required>
                                 </div>
@@ -93,9 +82,32 @@
     <script src="{{ URL::asset('assets/plugins/select2/js/select2.min.js') }}"></script>
     <!--Internal  Form-elements js-->
     <script src="{{ URL::asset('assets/js/advanced-form-elements.js') }}"></script>
-    <script src="{{ URL::asset('assets/js/select2.js') }}"></script>
     <!-- Internal form-elements js -->
     <script src="{{ URL::asset('assets/js/form-elements.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // تهيئة الحقل "من حساب"
+            $('.select2').select2({
+                ajax: {
+                    url: "{{ route('select2.getVehicle') }}", // رابط البحث
+                    dataType: 'json',
+                    delay: 250,
+                    data: function(params) {
+                        return {
+                            q: params.term // نص البحث
+                        };
+                    },
+                    processResults: function(data) {
+                        return {
+                            results: data
+                        };
+                    },
+                    cache: true,
+                },
+                placeholder: 'يرجى اختيار الحساب ',
+            });
+        });
+    </script>
 @livewireScripts
 
 @endsection

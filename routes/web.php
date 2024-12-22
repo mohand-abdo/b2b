@@ -148,10 +148,11 @@ Route::group(['middleware' => ['auth']], function () {
     // end route auth
 
     // عمل select2
-    Route::get('get/select', [App\Http\Controllers\ClientPayController::class, 'getSelect'])->name('select2.getSelect');
+    Route::get('get/select', [App\Http\Controllers\ClientPayController::class, 'getSelect'])->name('select2.search');
     Route::get('get/statement', [App\Http\Controllers\ClientsController::class, 'getStatement'])->name('select2.getStatement');
     Route::get('get/campaign', [App\Http\Controllers\StagesController::class, 'getCampaign'])->name('select2.getCampaign');
-
+    Route::get('get/vehicle', [App\Http\Controllers\VehicleController::class, 'getVehicle'])->name('select2.getVehicle');
+    Route::get('get/book', [App\Http\Controllers\BooksController::class, 'getBook'])->name('select2.getBook');
 });
 //////////////////////////////////////////////qrcode//////////////////////////////////////////
 

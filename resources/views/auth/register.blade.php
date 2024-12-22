@@ -34,7 +34,7 @@
                                             <form method="POST" action="{{ route('register') }}">
                                                 @csrf
                                                 <div class="form-group">
-                                                    <label>الاسم </label>
+                                                    <span class="tx-danger">*</span><label>الاسم </label>
                                                     <input id="text" type="name"
                                                         class="form-control @error('name') is-invalid @enderror"
                                                         name="name" value="{{ old('name') }}" required
@@ -47,7 +47,7 @@
                                                 </div>
 
                                                 <div class="form-group">
-                                                    <label>رقم التلفون</label>
+                                                    <span class="tx-danger">*</span><label>رقم التلفون</label>
                                                     <input id="number" type="phone"
                                                         class="form-control @error('phone') is-invalid @enderror"
                                                         name="phone" value="{{ old('phone') }}" required
@@ -73,7 +73,7 @@
                                                 </div>
 
                                                 <div class="form-group">
-                                                    <label>كلمة المرور</label>
+                                                    <span class="tx-danger">*</span><label>كلمة المرور</label>
                                                     <input id="password" type="password"
                                                         class="form-control @error('password') is-invalid @enderror"
                                                         name="password" required autocomplete="current-password">
@@ -85,7 +85,7 @@
                                                     @enderror
                                                 </div>
                                                 <div class="form-group">
-                                                    <label for="password-confirm">تاكيد كلمة المرور</label>
+                                                    <span class="tx-danger">*</span><label for="password-confirm">تاكيد كلمة المرور</label>
                                                     <input id="password-confirm" type="password" class="form-control"
                                                         name="password_confirmation" required autocomplete="new-password">
                                                 </div>

@@ -178,38 +178,118 @@ class ClientPayController extends Controller
     public function getSelect(Request $request)
     {
         $search = $request->get('q'); // النص المدخل من المستخدم
+        $exclude = $request->get('exclude', null);
 
-        // الاستعلام الأساسي
-        $query = Tree4::where('status', '=', '1') // الشرط العام
-            ->where(function ($q) {
-                $q->whereIn('tree3_code', ['1202', '1203']); // الشرط الأساسي للكود 1202 و 1203
+        // بدء الاستعلام الأساسي
+        if ($search != null) {
+            $query = Tree4::query();
+
+            // الشرط الأساسي للحالة العامة
+            $query->where('status', '=', '1')->where(function ($q) {
+                $q->whereIn('tree3_code', ['1202', '1203']);
             });
 
-        // إذا كان هناك نص بحث، إضافة شرط البحث
-        if (!empty($search)) {
-            $query->where('tree4_name', 'like', '%' . $search . '%');
+            // استثناء الحساب المختار في "من حساب" إذا وجد
+            if (!empty($exclude)) {
+                $query->where('id', '!=', $exclude);
+            }
+
+            // البحث بالنص المدخل
+            if (!empty($search)) {
+                $query->where('tree4_name', 'like', '%' . $search . '%');
+            }
+
+            // إذا كان المستخدم "owner" أو "agent"، معالجة الكود 1205 بناءً على نص البحث
+            if (!empty($search)) {
+                if (Auth::user()->roles_name == 'owner') {
+                    // جلب السجلات التي تحتوي على الكود 1205 فقط عند التطابق مع نص البحث
+                    $query->orWhere(function ($q) use ($search) {
+                        $q->where('tree3_code', '1205')->where('tree4_name', 'like', '%' . $search . '%');
+                    });
+                } elseif (Auth::user()->roles_name == 'agent') {
+                    // إضافة شرط user_id عند البحث بالكود 1205 للوكيل
+                    $query->orWhere(function ($q) use ($search) {
+                        $q->where('tree3_code', '1205')
+                            ->where('tree4_name', 'like', '%' . $search . '%')
+                            ->where('user_id', Auth::id());
+                    });
+                }
+            }
+
+            // استثناء الحساب المختار في "من حساب" إذا وجد
+            if (!empty($exclude)) {
+                $query->where('id', '!=', $exclude);
+            }
+
+            // تنفيذ الاستعلام وجلب النتائج
+            $tree4 = $query->get();
+
+            // تنسيق النتائج لـ Select2
+            $formattedResults = $tree4->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'text' => $item->tree4_name, // الحقل الذي سيظهر في Select2
+                ];
+            });
+
+            return response()->json($formattedResults);
         }
-
-        // جلب النتائج حسب الدور
-        if (Auth::user()->roles_name == 'owner') {
-            // المالك يمكنه رؤية جميع السجلات التي تحتوي على الكود 1205 بدون شرط إضافي
-            $tree4 = $query->orWhere('tree3_code', '1205')->get();
-        } elseif (Auth::user()->roles_name == 'agent') {
-            // الوكيل يحتاج إلى شرط إضافي عند الكود 1205
-            $tree4 = $query
-                ->orWhere(function ($q) {
-                    $q->where('tree3_code', '=', '1205')->where('user_id', '=', Auth::id());
-                })
-                ->get();
-        }
-
-        $formattedResults = $tree4->map(function ($item) {
-            return [
-                'id' => $item->id,
-                'text' => $item->tree4_name, // الحقل الذي سيظهر في Select2
-            ];
-        });
-
-        return response()->json($formattedResults);
     }
+
+    // public function getSelect(Request $request)
+    // {
+    //     $search = $request->get('q'); // النص المدخل من المستخدم
+    //     $exclude = $request->get('exclude', null);
+
+    //     // بدء الاستعلام الأساسي
+    //     $query = Tree4::query();
+
+    //     // الشرط الأساسي للحالة العامة
+    //     $query->where('status', '=', '1')->where(function ($q) {
+    //         $q->whereIn('tree3_code', ['1202', '1203']);
+    //     });
+
+    //     // البحث بالنص المدخل
+    //     if (!empty($search)) {
+    //         $query->where('tree4_name', 'like', '%' . $search . '%');
+    //     }
+
+    //     // معالجة الكود 1205 بناءً على النص والدور
+    //     if (!empty($search)) {
+    //         if (Auth::user()->roles_name == 'owner') {
+    //             $query->orWhere(function ($q) use ($search, $exclude) {
+    //                 $q->where('tree3_code', '1205')->where('tree4_name', 'like', '%' . $search . '%');
+
+    //                 // استثناء القيمة المحددة إذا كانت موجودة
+    //                 if (!empty($exclude)) {
+    //                     $q->where('tree3_name', '!=', $exclude);
+    //                 }
+    //             });
+    //         } elseif (Auth::user()->roles_name == 'agent') {
+    //             $query->orWhere(function ($q) use ($search) {
+    //                 $q->where('tree3_code', '1205')
+    //                     ->where('tree4_name', 'like', '%' . $search . '%')
+    //                     ->where('user_id', Auth::id());
+
+    //                 // استثناء القيمة المحددة إذا كانت موجودة
+    //                 if (!empty($exclude)) {
+    //                     $q->where('tree3_name', '!=', $exclude);
+    //                 }
+    //             });
+    //         }
+    //     }
+
+    //     // تنفيذ الاستعلام وجلب النتائج
+    //     $tree4 = $query->get();
+
+    //     // تنسيق النتائج لـ Select2
+    //     $formattedResults = $tree4->map(function ($item) {
+    //         return [
+    //             'id' => $item->id,
+    //             'text' => $item->tree4_name, // الحقل الذي سيظهر في Select2
+    //         ];
+    //     });
+
+    //     return response()->json($formattedResults);
+    // }
 }

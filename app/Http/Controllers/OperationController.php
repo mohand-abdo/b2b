@@ -17,11 +17,10 @@ class OperationController extends Controller
      */
     public function index()
     {
-        $tree4 = Tree4::all();
         // $daily = Operation::where('type', 1)->get();
         $daily = Operation::where('type', 1)->orderBy('created_at','desc')->take(5)->get();
         $id = 1;
-        return view('Operation.index', compact('tree4', 'daily', 'id'));
+        return view('Operation.index', compact( 'daily', 'id'));
     }
 
     /**

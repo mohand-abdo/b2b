@@ -189,14 +189,14 @@
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="tree4_name">الإسم</label>
+                                        <span class="tx-danger">*</span><label for="tree4_name"> الاسم </label>
                                         <input type="text" name="tree4_name" id="tree4_name" class="form-control"
                                             required>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="type">النوع</label>
+                                        <span class="tx-danger">*</span><label for="type">النوع</label>
                                         <select name="type" class="form-control nice-select" required>
                                             <option value="" disabled selected>اختر نوعاً</option>
                                             <option value="حاج">حاج</option>
@@ -207,9 +207,8 @@
 
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="phone">رقم الجواز</label>
-                                        <input type="text" name="iden" class="form-control"
-                                            required>
+                                        <span class="tx-danger">*</span><label for="phone">رقم الجواز</label>
+                                        <input type="text" name="iden" class="form-control" required>
                                     </div>
                                 </div>
                             </div>
@@ -217,7 +216,7 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="vat_number">رقم الهاتف</label>
+                                        <span class="tx-danger">*</span><label for="vat_number">رقم الهاتف</label>
                                         <input type="number" name="phone" class="form-control" required>
                                     </div>
                                 </div>
@@ -232,13 +231,13 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="location">العنوان</label>
+                                        <span class="tx-danger">*</span><label for="location">العنوان</label>
                                         <input type="text" name="location" id="location" class="form-control">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="nationalty">الجنسية</label>
+                                        <span class="tx-danger">*</span><label for="nationalty">الجنسية</label>
                                         <input type="text" name="nationalty" id="nationalty" class="form-control">
                                     </div>
                                 </div>
@@ -271,14 +270,14 @@
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="tree4_name">الإسم </label>
+                                        <span class="tx-danger">*</span><label for="tree4_name">الإسم </label>
                                         <input id="tree4_name" required type="text" name="tree4_name"
                                             class="form-control" required>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="type">النوع</label>
+                                        <span class="tx-danger">*</span><label for="type">النوع</label>
                                         {{-- id="select-beast" class="form-control  nice-select  custom-select"> --}}
                                         <select name="type" id="type" class="form-control  nice-select" required>
                                             <option value="" disabled selected>اختر نوعاً</option>
@@ -289,7 +288,7 @@
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="iden">رقم الجواز</label>
+                                        <span class="tx-danger">*</span><label for="iden">رقم الجواز</label>
                                         <input id="iden" required type="text" name="iden"
                                             class="form-control" required>
                                     </div>
@@ -298,8 +297,9 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="phone">رقم الهاتف</label>
-                                        <input id="phone" type="text" name="phone" class="form-control" required>
+                                        <span class="tx-danger">*</span><label for="phone">رقم الهاتف</label>
+                                        <input id="phone" type="text" name="phone" class="form-control"
+                                            required>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -313,14 +313,14 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="location">العنوان</label>
+                                        <span class="tx-danger">*</span><label for="location">العنوان</label>
                                         <input id="location" required type="text" name="location"
                                             class="form-control">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="nationalty">الجنسية</label>
+                                        <span class="tx-danger">*</span><label for="nationalty">الجنسية</label>
                                         <input id="nationalty" type="text" name="nationalty" class="form-control">
                                     </div>
                                 </div>
@@ -382,11 +382,11 @@
 
                         {{-- file_name --}}
                         <div class="form-group">
-                            <label for="attachments"> اسم المرفق</label>
+                            <span class="tx-danger">*</span><label for="attachments"> اسم المرفق</label>
                             <input type="text" name="name" class="form-control" required>
                         </div>
                         <div class="form-group">
-                            <label for="attachments">اختر المرفقات:</label>
+                            <span class="tx-danger">*</span><label for="attachments">اختر المرفقات:</label>
                             <input type="file" name="file" class="form-control" required>
                         </div>
                         <div id="attachmentList"></div>
@@ -472,7 +472,7 @@
                     $(this).attr('selected', 'selected'); // تعيين خاصية selected
                 }
             });
-    $('#type').niceSelect('update');
+            $('#type').niceSelect('update');
 
         })
     </script>

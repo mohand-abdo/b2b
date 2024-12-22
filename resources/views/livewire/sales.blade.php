@@ -10,7 +10,7 @@
                     <p style="color: red">{{$erorr_2}}</p>
                     <div class="row">
                         <div class="col-md-3"> 
-                            <label for="inputName" class="control-label"> العميل</label> 
+                            <span class="tx-danger">*</span><label for="inputName" class="control-label"> العميل</label> 
                             <select required wire:model="live_client" name="client"  class="form-control">
                                 <option value="">اختر العميل</option>
                                 @foreach ($client as $tree)
@@ -25,7 +25,7 @@
                         </div>
 
                         <div class="col">
-                            <label> الحساب</label>
+                            <span class="tx-danger">*</span><label> الحساب</label>
                             <select wire:model="live_bank_and_safe" required name="bank_and_safe" class="form-control">
                                 <option value="">اختر الحساب</option>
 

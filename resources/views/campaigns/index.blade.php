@@ -153,12 +153,12 @@
                         {{ csrf_field() }}
                         <div class="modal-body">
                             <div class="form-group">
-                                <label for="exampleInputEmail1">إسم الحملة </label>
+                                <span class="tx-danger">*</span><label for="exampleInputEmail1">إسم الحملة </label>
                                 <input type="text" name="name" id="name" class="form-control" required>
                             </div>
 
                             <div class="form-group">
-                                <label for="exampleInputEmail1"> تاريخ الحملة </label>
+                                <span class="tx-danger">*</span><label for="exampleInputEmail1"> تاريخ الحملة </label>
                                 <input type="date" name="date" id="phone" class="form-control" required>
                             </div>
 
@@ -186,13 +186,13 @@
                         {{ csrf_field() }}
                         <div class="modal-body">
                             <div class="form-group">
-                                <label>اسم الحملة</label>
+                                <span class="tx-danger">*</span><label>اسم الحملة</label>
                                 <input id="id" required type="hidden" name="id" class="form-control">
                                 <input id="name" required type="text" name="name" class="form-control"
                                     required>
                             </div>
                             <div class="form-group">
-                                <label> تاريخ الحملة</label>
+                                <span class="tx-danger">*</span><label> تاريخ الحملة</label>
                                 <input id="date" required type="date" name="date" class="form-control"
                                     required>
                             </div>

@@ -17,11 +17,10 @@ class VehicleController extends Controller
      */
     public function index()
     {
-        $tree4 = Tree4::all();
         // $daily = Operation::where('type', 1)->get();
         $daily = Operation::where('type', 1)->orderBy('created_at','desc')->take(5)->get();
         $id = 1;
-        return view('Vehicle.index', compact('tree4', 'daily', 'id'));
+        return view('Vehicle.index', compact( 'daily', 'id'));
     }
 
     /**
@@ -311,5 +310,43 @@ class VehicleController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function getVehicle(Request $request)
+    {
+        $search = $request->get('q'); // النص المدخل من المستخدم
+        $exclude = $request->get('exclude', null);
+
+        // بدء الاستعلام الأساسي
+        if ($search != null) {
+            $query = Tree4::query();
+
+            // الشرط الأساسي للحالة العامة
+            $query->where('status', '=', '1');
+
+            // البحث بالنص المدخل
+            if (!empty($search)) {
+                $query->where('tree4_name', 'like', '%' . $search . '%');
+            }
+
+
+            // استثناء الحساب المختار في "من حساب" إذا وجد
+            if (!empty($exclude)) {
+                $query->where('id', '!=', $exclude);
+            }
+
+            // تنفيذ الاستعلام وجلب النتائج
+            $tree4 = $query->get();
+
+            // تنسيق النتائج لـ Select2
+            $formattedResults = $tree4->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'text' => $item->tree4_name, // الحقل الذي سيظهر في Select2
+                ];
+            });
+
+            return response()->json($formattedResults);
+        }
     }
 }

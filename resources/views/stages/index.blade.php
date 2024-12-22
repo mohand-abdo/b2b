@@ -7,7 +7,6 @@
     <link href="{{ URL::asset('assets/plugins/datatable/css/jquery.dataTables.min.css') }}" rel="stylesheet">
     <link href="{{ URL::asset('assets/plugins/datatable/css/responsive.dataTables.min.css') }}" rel="stylesheet">
     <link href="{{ URL::asset('assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet">
-    <link href="{{ URL::asset('assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet">
     <!--Internal   Notify -->
     <link href="{{ URL::asset('assets/plugins/notify/css/notifIt.css') }}" rel="stylesheet" />
 @endsection
@@ -99,6 +98,9 @@
                                     <th class="wd-20p border-bottom-0">إسم الحملة </th>
                                     <th class="wd-15p border-bottom-0"> اسم المرحلة </th>
                                     <th class="wd-10p border-bottom-0"> عدد الحجاج وا المعتمرين </th>
+                                    @if (Auth::user()->roles_name == 'owner')
+                                        <th class="wd-10p border-bottom-0">بواسطة</th>
+                                    @endif
                                     <th class="wd-15p border-bottom-0"> تاريخ الإضافة </th>
                                     <th class="wd-25p border-bottom-0">العمليات </th>
                                 </tr>
@@ -110,6 +112,9 @@
                                         <td>{{ $stage->campaign->name }}</td>
                                         <td>{{ $stage->stage }}</td>
                                         <td>{{ \App\Models\Plus::where('stage_id', $stage->id)->count() }}</td>
+                                        @if (Auth::user()->roles_name == 'owner')
+                                            <td>{{ $stage->user_id == Auth::id() ? 'انت' : $stage->user->name }}</td>
+                                        @endif
                                         <!-- عرض عدد الحجاج في هذه المرحلة -->
                                         <td>{{ $stage->created_at }}</td>
                                         <td>
@@ -123,7 +128,8 @@
                                                 <a class="modal-effect btn btn-outline-success btn-sm"
                                                     data-effect="effect-super-scaled" data-toggle="modal" href="#modaldemo7"
                                                     data-id="{{ $stage->id }}" data-campaign_id="{{ $stage->campaign_id }}"
-                                                    data-stage="{{ $stage->stage }}" title="تعديل">
+                                                    data-stage="{{ $stage->stage }}"
+                                                    data-campaign_name="{{ $stage->campaign->name }}" title="تعديل">
                                                     <i class="fa fa-edit">
                                                     </i></i></a>
                                             @endcan
@@ -158,19 +164,23 @@
                     <form action="{{ route('Stages.store') }}" method="post" onsubmit="disableSubmitButton(this)">
                         {{ csrf_field() }}
                         <div class="modal-body">
-                            <div class="form-group">
-                                <label for="campaign_id">إسم الحملة</label>
-                                <select name="campaign_id" id="campaign_id" class="form-control" required>
-                                    <option value="">اختر الحملة</option>
-                                    @foreach ($campaigns as $campaign)
-                                        <option value="{{ $campaign->id }}">{{ $campaign->name }}</option>
-                                    @endforeach
-                                </select>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <span class="tx-danger">*</span><label for="campaign_id_add">إسم الحملة</label>
+                                        <select name="campaign_id" id="campaign_id_add" class="campaign form-control"
+                                            style="width: 100%;" required></select>
+                                    </div>
+                                </div>
                             </div>
-
-                            <div class="form-group">
-                                <label for="stage">اسم المرحلة</label>
-                                <input type="text" name="stage" id="stage" class="form-control" required>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <span class="tx-danger">*</span><label for="stage">اسم المرحلة</label>
+                                        <input type="text" name="stage" id="stage" class="form-control"
+                                            required>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -178,6 +188,7 @@
                             <button class="btn ripple btn-secondary" data-dismiss="modal" type="button">إغلاق</button>
                         </div>
                     </form>
+
                 </div>
             </div>
         </div>
@@ -197,20 +208,14 @@
                         {{ csrf_field() }}
                         <div class="modal-body">
                             <div class="form-group">
-                                <label for="campaign_id">اسم الحملة</label>
+                                <span class="tx-danger">*</span><label for="campaign_id">اسم الحملة</label>
                                 <input id="id" required type="hidden" name="id" class="form-control">
-                                <select id="campaign_id" name="campaign_id" class="form-control" required>
-                                    <option value="">اختر الحملة</option>
-                                    @php
-                                        $campaigns = \App\Models\Campaigns::where('status', 1)->get();
-                                    @endphp
-                                    @foreach ($campaigns as $campaign)
-                                        <option value="{{ $campaign->id }}">{{ $campaign->name }}</option>
-                                    @endforeach
-                                </select>
+                                <select name="campaign_id" id="campaign_id" class="campaign form-control"
+                                    style="width: 100%;" required></select>
+
                             </div>
                             <div class="form-group">
-                                <label for="stage">اسم المرحلة</label>
+                                <span class="tx-danger">*</span><label for="stage">اسم المرحلة</label>
                                 <input id="stage" required type="text" name="stage" class="form-control"
                                     required>
                             </div>
@@ -289,13 +294,20 @@
                 var button = $(event.relatedTarget);
                 var id = button.data('id');
                 var campaign_id = button.data('campaign_id');
+                var name = button.data('campaign_name');
                 var stage = button.data('stage');
                 var modal = $(this);
 
                 modal.find('.modal-body #id').val(id);
-                modal.find('.modal-body #campaign_id').val(campaign_id);
                 modal.find('.modal-body #stage').val(stage);
+                setSelect2Value('.campaign', campaign_id, name);
+
             });
+
+            function setSelect2Value(selectSelector, value, text) {
+                var option = new Option(text, value, true, true);
+                $(selectSelector).append(option).trigger('change');
+            }
 
             $('#modaldemo5').on('show.bs.modal', function(event) {
                 var button = $(event.relatedTarget);
@@ -332,10 +344,46 @@
                 });
             });
         });
-    </script>
-    <script>
+
         function disableSubmitButton(form) {
             form.querySelector('#submitBtn').disabled = true;
         }
+
+        function select2list(selector, url, placeholder) {
+            $(selector).select2({
+                language: {
+                    inputTooShort: function() {
+                        return 'ادخل حرف واحد على الاقل';
+                    }
+                },
+                ajax: {
+                    url: url,
+                    dataType: 'json',
+                    delay: 100,
+                    data: function(params) {
+                        return {
+                            q: params.term,
+                            page: params.page
+                        };
+                    },
+                    processResults: function(data, params) {
+                        console.log(data);
+                        params.page = params.page || 1;
+                        return {
+                            results: data,
+                            pagination: {
+                                more: ((data.total_count) > (params.page * 20))
+                            }
+                        };
+                    },
+                    cache: true
+                },
+                placeholder: placeholder,
+                minimumInputLength: 1,
+            });
+
+        };
+
+        select2list(".campaign", "{{ route('select2.getCampaign') }}", "يرجى إدخال الحملة");
     </script>
 @endsection

@@ -69,7 +69,7 @@ class FileController extends Controller
         $file->save();
         Session()->flash('file');
 
-        if (Auth::user()->roles_name == 'user') {
+        if (Auth::user()->roles_name == 'user' || Auth::user()->roles_name == 'agent') {
             return to_route('Clients.pic');
         }
 
@@ -146,12 +146,10 @@ class FileController extends Controller
         $validateData = $request->validate(
             [
                 'name' => 'required',
-                'file' => 'required',
                 'tree4_id' => 'required|exists:tree4s,id',
             ],
             [
                 'name.required' => 'يرجي إدخال المرفق او الملف ',
-                'file.required' => 'يجب ان لايكون حقل الملف فارغ ',
                 'tree4_id.required' => 'يجب ان لايكون حقل الحاج او المعتمر فارغ ',
                 'tree4_id.exists' => 'الحاج او المعتمر غير موحود',
             ],

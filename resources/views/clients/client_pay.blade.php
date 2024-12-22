@@ -88,34 +88,23 @@
                                 class="form-horizontal form-label-left">
                                 @csrf
                                 <div class="col">
-                                    {{-- <label for="inputName" class="control-label"> رقم القيد</label> --}}
+                                    {{-- <span class="tx-danger">*</span><label for="inputName" class="control-label"> رقم القيد</label> --}}
                                     <input required type="hidden" value="{{ $nextInvoiceNumber }}" name="Constraint_number"
                                         class="form-control madin" title="يرجي ادخال إسم الحساب" required>
                                 </div>
-
-
-                                <div class="row">
-                                    <div class="col">
-                                        <label> من حساب</label>
-                                        <select wire:model="selectedState" required name="Dain"
-                                            class="form-control select2"></select>
-                                    </div>
-
-                                    <div class="col">
-                                        <label for="inputName" class="control-label"> الى حساب</label>
-                                        <select required name="Madin" class="form-control select2"></select>
-                                    </div>
-                                </div>
+                                @livewire('select')
                                 </br>
                                 <div class="row">
                                     <div class="col">
-                                        <label for="inputName" class="control-label"> المبلغ</label>
+                                        <span class="tx-danger">*</span><label for="inputName" class="control-label">
+                                            المبلغ</label>
                                         <input required type="number" name="price" class="form-control"
                                             title="يرجي ادخال إسم الحساب" required>
                                     </div>
                                     </br>
                                     <div class="col">
-                                        <label for="inputName" class="control-label"> التاريخ </label>
+                                        <span class="tx-danger">*</span><label for="inputName" class="control-label">
+                                            التاريخ </label>
                                         <input required type="date" name="date" value="<?php echo date('Y-m-d'); ?>"
                                             class="form-control" title="يرجي ادخال إسم الحساب" required>
                                     </div>
@@ -280,42 +269,68 @@
             modal.find('.modal-body #id').val(id);
         })
 
-        function select2list(selector, url, placeholder) {
-            $(selector).select2({
-                language: {
-                    inputTooShort: function() {
-                        return 'ادخل حرف واحد على الاقل';
-                    }
-                },
+        document.addEventListener('DOMContentLoaded', function() {
+            // تهيئة الحقل "من حساب"
+            $('.select2-from').select2({
                 ajax: {
-                    url: url,
+                    url: "{{ route('select2.search') }}", // رابط البحث
                     dataType: 'json',
-                    delay: 100,
+                    delay: 250,
                     data: function(params) {
                         return {
-                            q: params.term,
-                            page: params.page
+                            q: params.term // نص البحث
                         };
                     },
-                    processResults: function(data, params) {
-                        console.log(data);
-                        params.page = params.page || 1;
+                    processResults: function(data) {
                         return {
-                            results: data,
-                            pagination: {
-                                more: ((data.total_count) > (params.page * 20))
-                            }
+                            results: data
                         };
                     },
-                    cache: true
+                    cache: true,
                 },
-                placeholder: placeholder,
-                minimumInputLength: 1,
+                placeholder: 'يرجى اختيار الحساب من',
             });
 
-        };
+            // تهيئة الحقل "إلى حساب"
+            $('.select2-to').select2({
+                ajax: {
+                    url: "{{ route('select2.search') }}",
+                    dataType: 'json',
+                    delay: 250,
+                    data: function(params) {
+                        return {
+                            q: params.term, // نص البحث
+                            exclude: $('.select2-from')
+                                .val() // إرسال القيمة المختارة في "من حساب" كـ exclude
+                        };
+                    },
+                    processResults: function(data) {
+                        return {
+                            results: data
+                        };
+                    },
+                    cache: true,
+                },
+                placeholder: 'يرجى اختيار الحساب إلى',
+            });
 
-        select2list(".select2", "{{ route('select2.getSelect') }}", "يرجى ادخال حساب");
+            // تحديث الحقل "إلى حساب" عند تغيير الحقل "من حساب"
+            $('.select2-from').on('change', function() {
+                $('.select2-to').val(null).trigger('change'); // إعادة تعيين الحقل "إلى حساب"
+                $('.select2-to').prop('disabled', false);
+
+            });
+
+            $('.select2-to').on('change', function() {
+                if ($('.select2-to').val() === $('.select2-from').val()) {
+                    $('.select2-to').val(null).trigger('change'); // إعادة تعيين الحقل "إلى حساب"
+                    notif({
+                        msg: "لا يمكن ادخال حساب الى بنفس الحساب من.",
+                        type: "error"
+                    })
+                }
+            });
+        });
     </script>
     @livewireScripts
 @endsection
