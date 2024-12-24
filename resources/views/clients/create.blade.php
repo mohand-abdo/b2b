@@ -53,6 +53,17 @@
                         </script>
                     @endif
 
+                    @if (session()->has('info'))
+                        <script>
+                            window.onload = function() {
+                                notif({
+                                    msg: " لا يمكنك الدخول الى صفحة المرفقات الا بعد التسجيل  بياناتك كحاج او معتمر",
+                                    type: "error"
+                                })
+                            }
+                        </script>
+                    @endif
+
                     @if (session()->has('error'))
                         <script>
                             window.onload = function() {

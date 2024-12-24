@@ -25,10 +25,10 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $data = User::orderBy('id', 'DESC')->paginate(5);
-        if($request->id !== null){
-           $notfiy =  Notification::findOrFail($request->id);
-           $notfiy->read = true;
-           $notfiy->save();
+        if ($request->id !== null) {
+            $notfiy = Notification::findOrFail($request->id);
+            $notfiy->read = true;
+            $notfiy->save();
         }
         return view('users.show_users', compact('data'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
@@ -101,28 +101,29 @@ class UserController extends Controller
             'password' => 'same:confirm-password',
             'roles' => 'required',
         ]);
-        
+
         $user = User::findOrFail($id);
-        $user->update(attributes: [
-            'name' => $request->name,
-            'email' => $request->email,
-            'phone_number' => $request->phone_number,
-            'Status' => $request->Status, // لاحظ أن الحقل يكتب بأحرف صغيرة إذا كان اسم العمود كذلك
-            'roles_name' => $request->roles, // لاحظ أن الحقل يكتب بأحرف صغيرة إذا كان اسم العمود كذلك
-        ]);
+        $user->update(
+            attributes: [
+                'name' => $request->name,
+                'email' => $request->email,
+                'phone_number' => $request->phone_number,
+                'Status' => $request->Status, // لاحظ أن الحقل يكتب بأحرف صغيرة إذا كان اسم العمود كذلك
+                'roles_name' => $request->roles, // لاحظ أن الحقل يكتب بأحرف صغيرة إذا كان اسم العمود كذلك
+            ],
+        );
 
         if ($request->filled('password')) {
             // التحقق مما إذا كانت كلمة المرور مملوءة فقط
             $user->update(['password' => Hash::make($request->password)]);
         }
- // **1. إزالة جميع الأدوار القديمة**
-    $user->syncRoles([]);
+        // **1. إزالة جميع الأدوار القديمة**
+        $user->syncRoles([]);
 
-    if (!empty($request->roles)) {
-        $user->assignRole($request->roles);
-    }
+        if (!empty($request->roles)) {
+            $user->assignRole($request->roles);
+        }
 
-    
         // DB::table('model_has_roles')->where('model_id', $id)->delete();
         // $user->assignRole($request->input('roles'));
         return redirect()->route('users.index')->with('success', 'تم تحديث بيانات المستخدم بنجاح');
@@ -138,5 +139,40 @@ class UserController extends Controller
         $id = $request->user_id;
         User::find($id)->delete();
         return redirect()->route('users.index')->with('success', 'تم حذف المستخدم بنجاح');
+    }
+
+    public function password_reset(Request $request)
+    {
+        // التحقق من وجود user_id
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+        ]);
+
+        $id = $request->user_id;
+        $user = User::find($id);
+
+        if ($user) {
+
+            // تعيين كلمة المرور الجديدة
+            $user->password = Hash::make(123456789);
+            $user->save();
+
+            // يمكنك إضافة إرسال بريد إلكتروني للمستخدم في حال أردت إبلاغه
+            // Mail::to($user->email)->send(new PasswordResetMail($newPassword));
+
+            return response()->json(
+                [
+                    'message' => 'تم إعادة تعيين كلمة المرور بنجاح.',
+                ],
+                200,
+            );
+        }
+
+        return response()->json(
+            [
+                'message' => 'المستخدم غير موجود.',
+            ],
+            404,
+        );
     }
 }

@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('password');
             $table->string('roles_name');
             $table->string('Status', 10);
+            $table->tinyInteger('type')->default(0);    
             $table->string('pilgrims_id')->nullable();
             $table->rememberToken();
             $table->timestamps();

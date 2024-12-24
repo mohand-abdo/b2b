@@ -396,7 +396,6 @@
 
         $('.toggle-status-btn').click(function() {
             var treeId = $(this).data('id');
-            console.log(treeId);
             var button = $(this);
 
             $.ajax({

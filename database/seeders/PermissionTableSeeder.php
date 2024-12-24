@@ -90,6 +90,7 @@ $permissions = [
 'اضافة حاج ل بياناته',
 'اضافة مرفق',
 'كشف حساب عميل',
+'تعيين كلمة المرور'
 
 ];
 foreach ($permissions as $permission) {

@@ -199,7 +199,7 @@
                     @csrf
                     <div class="modal-body">
                         @if (Auth::user()->roles_name == 'user')
-                            <input type="hidden" name="tree4_id" id="id" value="{{ $tree4Id }}">
+                            <input type="hidden" name="tree4_id"  value="{{ $tree4Id }}">
                         @elseif (Auth::user()->roles_name == 'agent')
                             <div class="form-group">
                                 <span class="tx-danger">*</span><label for="tree4_id">الحاج / المعتمر</label>

@@ -42,6 +42,8 @@ class ClientsController extends Controller
             $notfiy->save();
         }
 
+        // dd($tree4s);
+
         $tree3s = Tree3::all();
 
         return view('clients.Clients', compact('tree3s', 'tree4s'));
@@ -99,7 +101,7 @@ class ClientsController extends Controller
             // Create a new Tree4 entry
             $tree4 = new Tree4();
             $tree4->tree4_name = $request->tree4_name;
-            $tree4->tree3_code = 12;
+            $tree4->tree3_code = 1205;
             $tree4->iden = $request->iden;
             $tree4->phone = $request->phone;
             $tree4->email = $request->email;
@@ -301,6 +303,7 @@ class ClientsController extends Controller
 
     public function show_pic()
     {
+        if(Tree4::where('user_id', Auth::id())->exists()) {
         if (Auth::user()->roles_name == 'agent') {
             $tree4Id = Tree4::select('id')->where('user_id', Auth::id())->get();
             if ($tree4Id->count() > 0) {
@@ -315,6 +318,9 @@ class ClientsController extends Controller
             $files = File::where('tree4_id', $tree4Id)->get();
         }
         return view('clients.show_pic', compact('files', 'tree4Id'));
+    }else{
+        return redirect()->route('Clients.create')->with('info', 'خطا');
+    }
     }
 
     public function my_statment()

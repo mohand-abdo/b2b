@@ -51,7 +51,7 @@
 
                             <div class="row mg-b-20">
                                 <div class="parsley-input col-md-6" id="fnWrapper">
-                                    <span class="tx-danger">*</span><label>اسم الوكيل: </label>
+                                    <span class="tx-danger">*</span><label>الاسم : </label>
                                     <input class="form-control form-control" data-parsley-class-handler="#lnWrapper"
                                         name="name" required="" type="text" value="{{ old('name') }}">
                                 </div>
@@ -99,6 +99,16 @@
                                 <div class="form-group">
                                     <span class="tx-danger">*</span><label class="form-label"> صلاحية المستخدم</label>
                                     {!! Form::select('roles_name', $roles, old('roles_name'), ['class' => 'form-control nice-select']) !!}
+                                </div>
+                            </div>
+
+                            <div class="parsley-input col-md-6 mg-t-20 mg-md-t-0">
+                                <div class="form-group">
+                                    <span class="tx-danger">*</span><label class="form-label"> نوع المستخدم</label>
+                                    <select class="form-control nice-select" name="type" id="type">
+                                        <option value="0" {{ old('type' == 0 ?'selected' : '') }}>مستخدم عادي</option>
+                                        <option value="1" {{ old('type' == 1 ?'selected' : '') }}>مستخدم متدرب</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>

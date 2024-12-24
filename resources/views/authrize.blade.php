@@ -14,9 +14,9 @@
 @section('content')
 		<!-- Main-error-wrapper -->
 		<div class="main-error-wrapper  page page-h ">
-			<img src="{{URL::asset('assets/img/media/403.png')}}" class="error-page" alt="error">
-			<h2> عفوا لا يمكنك الدخول الى النظام .</h2>
-			<h6>يرجى مراجعة الادمن او الشخص المسوؤل حتى تتمكن من شراء النظام.</h6><a class="btn btn-outline-danger" href="{{ url('/' . $page='index') }}">Back to Home</a>
+			<img src="{{URL::asset('assets/img/media/autherize.webp')}}" class="error-page mb-4" alt="error">
+			<h2>عفوا لا يمكنك الدخول الى النظام بعد الان.</h2>
+			<h6>يجب مراجعة الجهة المسوؤلة حتى تتمكن من شراء النظام.</h6>
 		</div>
 		<!-- /Main-error-wrapper -->
 @endsection

@@ -24,7 +24,7 @@ Auth::routes();
 //Auth::routes(['register'=>false]);
 //  route auth
 
-Route::group(['middleware' => ['auth']], function () {
+Route::group(['middleware' => ['auth','check.user']], function () {
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
     // الراوتات الخاصة بنظام العمرة
@@ -45,6 +45,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['middleware' => ['auth']], function () {
         Route::resource('roles', App\Http\Controllers\RoleController::class);
         Route::resource('users', App\Http\Controllers\UserController::class);
+        Route::post('users/password_reset', [App\Http\Controllers\UserController::class,'password_reset'])->name('users.reset.password');
         // Route::get('users',[App\Http\Controllers\UserController::class, 'index'])->name('users.index');
     });
 
@@ -162,5 +163,6 @@ Route::get('Contract_scan/{id}', [App\Http\Controllers\ContractController::class
 // Route::resource('profile', App\Http\Controllers\ProfileController::class);
 // rote all page
 Route::get('/{page}', [App\Http\Controllers\AdminController::class, 'index']);
+Route::get('authrize', [App\Http\Controllers\AdminController::class,'authrize'])->name('authrize');
 
 Route::get('/email', function () {});

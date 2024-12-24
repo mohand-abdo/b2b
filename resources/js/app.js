@@ -19,13 +19,6 @@ import "lightbox2/dist/js/lightbox.js";
 
 
 
-lightbox.option({
-resizeDuration: 200,
-wrapAround: true,
-});
-
-
-
 
 
 
