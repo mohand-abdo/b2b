@@ -19,20 +19,20 @@ class CheckUser
      */
     public function handle(Request $request, Closure $next)
     {
-        
         $user = Auth::user();
 
-
-        if ($user) {
-        
+        if ($user)
+        {
             $now = Carbon::now();
-            $twoWeeksLater = $user->created_at->subweeks(2); 
+            $twoWeeksLater = $user->created_at->addWeeks(2); // إضافة أسبوعين بدلاً من خصمهم
 
-            if ($now >= $twoWeeksLater && $user->type == 1) {
+            if ($now->gte($twoWeeksLater) && $user->type == 1) {
+                // استخدام gte للتحقق من "أكبر من أو يساوي"
                 Auth::logout();
                 return redirect()->route('authrize');
             }
         }
+
         return $next($request);
     }
 }
