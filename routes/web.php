@@ -24,7 +24,7 @@ Auth::routes();
 //Auth::routes(['register'=>false]);
 //  route auth
 
-Route::group(['middleware' => ['auth','check.user']], function () {
+Route::group(['middleware' => ['auth', 'check.user']], function () {
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
     // الراوتات الخاصة بنظام العمرة
@@ -45,7 +45,7 @@ Route::group(['middleware' => ['auth','check.user']], function () {
     Route::group(['middleware' => ['auth']], function () {
         Route::resource('roles', App\Http\Controllers\RoleController::class);
         Route::resource('users', App\Http\Controllers\UserController::class);
-        Route::post('users/password_reset', [App\Http\Controllers\UserController::class,'password_reset'])->name('users.reset.password');
+        Route::post('users/password_reset', [App\Http\Controllers\UserController::class, 'password_reset'])->name('users.reset.password');
         // Route::get('users',[App\Http\Controllers\UserController::class, 'index'])->name('users.index');
     });
 
@@ -150,9 +150,12 @@ Route::group(['middleware' => ['auth','check.user']], function () {
 
     // عمل select2
     Route::get('get/select', [App\Http\Controllers\ClientPayController::class, 'getSelect'])->name('select2.search');
+    Route::get('get/select/code', [App\Http\Controllers\ClientPayController::class, 'getSelectCode'])->name('select2.searchCode');
     Route::get('get/statement', [App\Http\Controllers\ClientsController::class, 'getStatement'])->name('select2.getStatement');
+    Route::get('get/statement/code', [App\Http\Controllers\ClientsController::class, 'getStatementCode'])->name('select2.getStatementCode');
     Route::get('get/campaign', [App\Http\Controllers\StagesController::class, 'getCampaign'])->name('select2.getCampaign');
     Route::get('get/vehicle', [App\Http\Controllers\VehicleController::class, 'getVehicle'])->name('select2.getVehicle');
+    Route::get('get/vehicle/code', [App\Http\Controllers\VehicleController::class, 'getVehicleCode'])->name('select2.getVehicleCode');
     Route::get('get/book', [App\Http\Controllers\BooksController::class, 'getBook'])->name('select2.getBook');
 });
 //////////////////////////////////////////////qrcode//////////////////////////////////////////
@@ -163,6 +166,6 @@ Route::get('Contract_scan/{id}', [App\Http\Controllers\ContractController::class
 // Route::resource('profile', App\Http\Controllers\ProfileController::class);
 // rote all page
 Route::get('/{page}', [App\Http\Controllers\AdminController::class, 'index']);
-Route::get('authrize', [App\Http\Controllers\AdminController::class,'authrize'])->name('authrize');
+Route::get('authrize', [App\Http\Controllers\AdminController::class, 'authrize'])->name('authrize');
 
 Route::get('/email', function () {});

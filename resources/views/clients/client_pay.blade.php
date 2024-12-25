@@ -112,6 +112,11 @@
                                 </br>
                                 <div class="row">
                                     <div class="col">
+                                        <span class="tx-danger">*</span><label for="campaign" class="control-label">
+                                            الحملة </label>
+                                        <select class="form-control campaign" name="campaign" id="campaign" required ></select>
+                                    </div>
+                                    <div class="col">
                                         <label>البيان</label>
                                         <textarea rows="5" name="Statement" class="form-control"></textarea>
                                     </div>
@@ -273,7 +278,7 @@
             // تهيئة الحقل "من حساب"
             $('.select2-from').select2({
                 ajax: {
-                    url: "{{ route('select2.search') }}", // رابط البحث
+                    url: "{{ route('select2.searchCode') }}", // رابط البحث
                     dataType: 'json',
                     delay: 250,
                     data: function(params) {
@@ -294,7 +299,7 @@
             // تهيئة الحقل "إلى حساب"
             $('.select2-to').select2({
                 ajax: {
-                    url: "{{ route('select2.search') }}",
+                    url: "{{ route('select2.searchCode') }}",
                     dataType: 'json',
                     delay: 250,
                     data: function(params) {
@@ -312,6 +317,29 @@
                     cache: true,
                 },
                 placeholder: 'يرجى اختيار الحساب إلى',
+            });
+
+            // تهيئة الحقل "إلى حساب"
+            $('.campaign').select2({
+                ajax: {
+                    url: "{{ route('select2.getCampaign') }}",
+                    dataType: 'json',
+                    delay: 250,
+                    data: function(params) {
+                        return {
+                            q: params.term, // نص البحث
+                            exclude: $('.select2-from')
+                                .val() // إرسال القيمة المختارة في "من حساب" كـ exclude
+                        };
+                    },
+                    processResults: function(data) {
+                        return {
+                            results: data
+                        };
+                    },
+                    cache: true,
+                },
+                placeholder: 'يرجى اختيار  الحملة',
             });
 
             // تحديث الحقل "إلى حساب" عند تغيير الحقل "من حساب"

@@ -103,7 +103,7 @@ class StagesController extends Controller
             ->whereDate('created_at', '>=', $request->start)
             ->whereDate('created_at', '<=', $request->end)
             ->orderBy('id', 'DESC')
-            ->where('Madin', 'like', '1205%');
+            ->where('Madin', '1205%');
         if (Auth::user()->roles_name == 'owner') {
             $Madin = $Madin->get();
         } elseif (Auth::user()->roles_name == 'agent') {

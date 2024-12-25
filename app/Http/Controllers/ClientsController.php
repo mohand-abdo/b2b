@@ -194,7 +194,7 @@ class ClientsController extends Controller
         $start = $request->start;
         $end = $request->end;
         $name = $request->tree4;
-        $Madin = Operation::where('Madin', $request->tree4)
+        $Madin = Operation::where('Madin', $request->tree4 )
             ->whereDate('created_at', '>=', $request->start)
             ->whereDate('created_at', '<=', $request->end)
             ->orderBy('id', 'DESC')
@@ -204,7 +204,6 @@ class ClientsController extends Controller
             ->whereDate('created_at', '<=', $request->end)
             ->orderBy('id', 'DESC')
             ->get();
-
         $id = 1;
 
         return view('clients.show', compact('Madin', 'Dain', 'start', 'end', 'name', 'id'));
@@ -303,24 +302,24 @@ class ClientsController extends Controller
 
     public function show_pic()
     {
-        if(Tree4::where('user_id', Auth::id())->exists()) {
-        if (Auth::user()->roles_name == 'agent') {
-            $tree4Id = Tree4::select('id')->where('user_id', Auth::id())->get();
-            if ($tree4Id->count() > 0) {
-                $files = File::with('tree4')
-                    ->where('tree4_id', $tree4Id[0]->id)
-                    ->get();
+        if (Tree4::where('user_id', Auth::id())->exists()) {
+            if (Auth::user()->roles_name == 'agent') {
+                $tree4Id = Tree4::select('id')->where('user_id', Auth::id())->get();
+                if ($tree4Id->count() > 0) {
+                    $files = File::with('tree4')
+                        ->where('tree4_id', $tree4Id[0]->id)
+                        ->get();
+                } else {
+                    $files = File::query();
+                }
             } else {
-                $files = File::query();
+                $tree4Id = Tree4::where('user_id', Auth::id())->pluck('id')->first();
+                $files = File::where('tree4_id', $tree4Id)->get();
             }
+            return view('clients.show_pic', compact('files', 'tree4Id'));
         } else {
-            $tree4Id = Tree4::where('user_id', Auth::id())->pluck('id')->first();
-            $files = File::where('tree4_id', $tree4Id)->get();
+            return redirect()->route('Clients.create')->with('info', 'خطا');
         }
-        return view('clients.show_pic', compact('files', 'tree4Id'));
-    }else{
-        return redirect()->route('Clients.create')->with('info', 'خطا');
-    }
     }
 
     public function my_statment()
@@ -352,6 +351,35 @@ class ClientsController extends Controller
             $formattedResults = $tree4->map(function ($item) {
                 return [
                     'id' => $item->id,
+                    'text' => $item->tree4_name, // الحقل الذي سيظهر في Select2
+                ];
+            });
+
+            return response()->json($formattedResults);
+        }
+    }
+
+    public function getStatementCode(Request $request)
+    {
+        $search = $request->get('q');
+        if ($search != '') {
+            $query = Tree4::query()
+                ->where('tree3_code', 1205)
+                ->where('status', 1)
+                ->when($search, function ($query) use ($search) {
+                    $query->where('tree4_name', 'like', '%' . $search . '%');
+                });
+
+            if (Auth::user()->roles_name == 'owner') {
+                // لا حاجة لاستخدام get() هنا، لأنها مجموعة بيانات بالفعل
+                $tree4 = $query->get(); // عرض جميع البيانات
+            } elseif (Auth::user()->roles_name == 'agent') {
+                $tree4 = $query->where('user_id', Auth::id())->get(); // عرض البيانات التي أضافها المستخدم فقط
+            }
+
+            $formattedResults = $tree4->map(function ($item) {
+                return [
+                    'id' => $item->tree4_code,
                     'text' => $item->tree4_name, // الحقل الذي سيظهر في Select2
                 ];
             });

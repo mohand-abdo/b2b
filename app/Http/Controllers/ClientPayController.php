@@ -60,10 +60,11 @@ class ClientPayController extends Controller
             'Dain' => 'required',
             'price' => 'required',
             'date' => 'required',
+            'campaign' => 'required',
         ]);
         $pluseId = Plus::orWhere('tree4_code', $request->Madin)
             ->orWhere('tree4_code', $request->Dain)
-            ->latest()
+            ->where('campaign_id', $request->campaign)
             ->first();
         // $check =   $request->Constraint_number;
         $operation = new Operation();
@@ -236,60 +237,64 @@ class ClientPayController extends Controller
         }
     }
 
-    // public function getSelect(Request $request)
-    // {
-    //     $search = $request->get('q'); // النص المدخل من المستخدم
-    //     $exclude = $request->get('exclude', null);
+    public function getSelectCode(Request $request)
+    {
+        $search = $request->get('q'); // النص المدخل من المستخدم
+        $exclude = $request->get('exclude', null);
 
-    //     // بدء الاستعلام الأساسي
-    //     $query = Tree4::query();
+        // بدء الاستعلام الأساسي
+        if ($search != null) {
+            $query = Tree4::query();
 
-    //     // الشرط الأساسي للحالة العامة
-    //     $query->where('status', '=', '1')->where(function ($q) {
-    //         $q->whereIn('tree3_code', ['1202', '1203']);
-    //     });
+            // الشرط الأساسي للحالة العامة
+            $query->where('status', '=', '1')->where(function ($q) {
+                $q->whereIn('tree3_code', ['1202', '1203']);
+            });
 
-    //     // البحث بالنص المدخل
-    //     if (!empty($search)) {
-    //         $query->where('tree4_name', 'like', '%' . $search . '%');
-    //     }
+            // استثناء الحساب المختار في "من حساب" إذا وجد
+            if (!empty($exclude)) {
+                $query->where('id', '!=', $exclude);
+            }
 
-    //     // معالجة الكود 1205 بناءً على النص والدور
-    //     if (!empty($search)) {
-    //         if (Auth::user()->roles_name == 'owner') {
-    //             $query->orWhere(function ($q) use ($search, $exclude) {
-    //                 $q->where('tree3_code', '1205')->where('tree4_name', 'like', '%' . $search . '%');
+            // البحث بالنص المدخل
+            if (!empty($search)) {
+                $query->where('tree4_name', 'like', '%' . $search . '%');
+            }
 
-    //                 // استثناء القيمة المحددة إذا كانت موجودة
-    //                 if (!empty($exclude)) {
-    //                     $q->where('tree3_name', '!=', $exclude);
-    //                 }
-    //             });
-    //         } elseif (Auth::user()->roles_name == 'agent') {
-    //             $query->orWhere(function ($q) use ($search) {
-    //                 $q->where('tree3_code', '1205')
-    //                     ->where('tree4_name', 'like', '%' . $search . '%')
-    //                     ->where('user_id', Auth::id());
+            // إذا كان المستخدم "owner" أو "agent"، معالجة الكود 1205 بناءً على نص البحث
+            if (!empty($search)) {
+                if (Auth::user()->roles_name == 'owner') {
+                    // جلب السجلات التي تحتوي على الكود 1205 فقط عند التطابق مع نص البحث
+                    $query->orWhere(function ($q) use ($search) {
+                        $q->where('tree3_code', '1205')->where('tree4_name', 'like', '%' . $search . '%');
+                    });
+                } elseif (Auth::user()->roles_name == 'agent') {
+                    // إضافة شرط user_id عند البحث بالكود 1205 للوكيل
+                    $query->orWhere(function ($q) use ($search) {
+                        $q->where('tree3_code', '1205')
+                            ->where('tree4_name', 'like', '%' . $search . '%')
+                            ->where('user_id', Auth::id());
+                    });
+                }
+            }
 
-    //                 // استثناء القيمة المحددة إذا كانت موجودة
-    //                 if (!empty($exclude)) {
-    //                     $q->where('tree3_name', '!=', $exclude);
-    //                 }
-    //             });
-    //         }
-    //     }
+            // استثناء الحساب المختار في "من حساب" إذا وجد
+            if (!empty($exclude)) {
+                $query->where('id', '!=', $exclude);
+            }
 
-    //     // تنفيذ الاستعلام وجلب النتائج
-    //     $tree4 = $query->get();
+            // تنفيذ الاستعلام وجلب النتائج
+            $tree4 = $query->get();
 
-    //     // تنسيق النتائج لـ Select2
-    //     $formattedResults = $tree4->map(function ($item) {
-    //         return [
-    //             'id' => $item->id,
-    //             'text' => $item->tree4_name, // الحقل الذي سيظهر في Select2
-    //         ];
-    //     });
+            // تنسيق النتائج لـ Select2
+            $formattedResults = $tree4->map(function ($item) {
+                return [
+                    'id' => $item->tree4_code,
+                    'text' => $item->tree4_name, // الحقل الذي سيظهر في Select2
+                ];
+            });
 
-    //     return response()->json($formattedResults);
-    // }
+            return response()->json($formattedResults);
+        }
+    }
 }

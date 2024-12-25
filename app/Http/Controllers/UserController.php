@@ -109,6 +109,7 @@ class UserController extends Controller
                 'email' => $request->email,
                 'phone_number' => $request->phone_number,
                 'Status' => $request->Status, // لاحظ أن الحقل يكتب بأحرف صغيرة إذا كان اسم العمود كذلك
+                'type' => $request->type, // لاحظ أن الحقل يكتب بأحرف صغيرة إذا كان اسم العمود كذلك
                 'roles_name' => $request->roles, // لاحظ أن الحقل يكتب بأحرف صغيرة إذا كان اسم العمود كذلك
             ],
         );

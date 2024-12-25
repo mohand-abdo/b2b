@@ -106,8 +106,8 @@
                                 <div class="form-group">
                                     <span class="tx-danger">*</span><label class="form-label"> نوع المستخدم</label>
                                     <select class="form-control nice-select" name="type" id="type">
-                                        <option value="0" {{ old('type' == 0 ?'selected' : '') }}>مستخدم عادي</option>
-                                        <option value="1" {{ old('type' == 1 ?'selected' : '') }}>مستخدم متدرب</option>
+                                        <option value="0" {{ old('type') == 0 ?'selected' : '' }}>مستخدم عادي</option>
+                                        <option value="1" {{ old('type') == 1 ?'selected' : '' }}>مستخدم متدرب</option>
                                     </select>
                                 </div>
                             </div>

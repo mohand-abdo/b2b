@@ -86,8 +86,8 @@
                             <select name="Status" id="select-beast" class="form-control  nice-select  custom-select">
                                 <option value="مفعل" {{ old('Status', $user->Status) == 'مفعل' ? 'selected' : '' }}>مفعل
                                 </option>
-                                <option value="غير مفعل"
-                                    {{ old('Status', $user->Status) == 'غير مفعل' ? 'selected' : '' }}>غير مفعل</option>
+                                <option value="غير مفعل" {{ old('Status', $user->Status) == 'غير مفعل' ? 'selected' : '' }}>
+                                    غير مفعل</option>
                             </select>
                         </div>
                     </div>
@@ -95,8 +95,20 @@
                     <div class="row mg-b-20">
                         <div class="parsley-input col-md-6 mg-t-20 mg-md-t-0">
                             <div class="form-group">
-                                <strong>نوع المستخدم</strong>
+                                <span class="tx-danger">*</span><label>صلاحية المستخدم</label>
                                 {!! Form::select('roles', $roles, old('roles', $userRole), ['class' => 'form-control nice-select']) !!}
+                            </div>
+                        </div>
+                        <div class="parsley-input col-md-6 mg-t-20 mg-md-t-0">
+                            <div class="form-group">
+                                <span class="tx-danger">*</span><label> نوع المستخدم</label>
+                                <select class="form-control nice-select" name="type">
+                                    <option value="0" {{ old('type', $user->type) == 0 ? 'selected' : '' }}>مستخدم عادي
+                                    </option>
+                                    <option value="1" {{ old('type', $user->type) == 1 ? 'selected' : '' }}>مستخدم
+                                        متدرب
+                                    </option>
+                                </select>
                             </div>
                         </div>
                     </div>

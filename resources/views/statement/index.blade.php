@@ -89,7 +89,7 @@
             // تهيئة الحقل "من حساب"
             $('.select2').select2({
                 ajax: {
-                    url: "{{ route('select2.getVehicle') }}", // رابط البحث
+                    url: "{{ route('select2.getVehicleCode') }}", // رابط البحث
                     dataType: 'json',
                     delay: 250,
                     data: function(params) {

@@ -271,7 +271,7 @@
             // تهيئة الحقل "من حساب"
             $('.select2-from').select2({
                 ajax: {
-                    url: "{{ route('select2.getVehicle') }}", // رابط البحث
+                    url: "{{ route('select2.getVehicleCode') }}", // رابط البحث
                     dataType: 'json',
                     delay: 250,
                     data: function(params) {
@@ -292,7 +292,7 @@
             // تهيئة الحقل "إلى حساب"
             $('.select2-to').select2({
                 ajax: {
-                    url: "{{ route('select2.getVehicle') }}",
+                    url: "{{ route('select2.getVehicleCode') }}",
                     dataType: 'json',
                     delay: 250,
                     data: function(params) {

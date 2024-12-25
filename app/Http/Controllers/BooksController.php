@@ -24,19 +24,19 @@ class BooksController extends Controller
     public function show(Request $request):View
     {
         $number = $request->tree3;
-        $tree4ID = Tree4::where('tree3_code', $number)->pluck('id');
-        $one = Restrictions::whereIn('tree4_code', $tree4ID )
+        $one = Restrictions::where('tree4_code','like', $number .'%')
             ->whereDate('date', '>=', $request->start)
             ->whereDate('date', '<=', $request->end)
             ->get();
-        $Madin = Restrictions::whereIn('tree4_code', $tree4ID )
-            ->whereDate('date', '>=', $request->start)
-            ->whereDate('date', '<=', $request->end)
+        $Madin = Restrictions::where('tree4_code','like', $number .'%' )
+            ->whereDate('created_at', '>=', $request->start)
+            ->whereDate('created_at', '<=', $request->end)
             ->sum('Madin');
-        $Dain = Restrictions::whereIn('tree4_code', $tree4ID )
+        $Dain = Restrictions::where('tree4_code','like', $number .'%' )
             ->whereDate('date', '>=', $request->start)
             ->whereDate('date', '<=', $request->end)
             ->sum('Dain');
+
         $start = $request->start;
         $end = $request->end;
         return view('books.show', compact('one', 'start', 'end', 'Madin', 'Dain'));

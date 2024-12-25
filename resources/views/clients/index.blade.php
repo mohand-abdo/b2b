@@ -54,14 +54,16 @@
                                 </br>
                                 <div class="row">
                                     <div class="col">
-                                        <span class="tx-danger">*</span><label for="inputName" class="control-label"> تاريخ البداية
+                                        <span class="tx-danger">*</span><label for="inputName" class="control-label"> تاريخ
+                                            البداية
                                         </label>
                                         <input type="date" name="start" value="<?php echo date('Y-m-d'); ?>"
                                             class="form-control" required>
                                     </div>
                                     </br>
                                     <div class="col">
-                                        <span class="tx-danger">*</span><label for="inputName" class="control-label"> تاريخ النهاية
+                                        <span class="tx-danger">*</span><label for="inputName" class="control-label"> تاريخ
+                                            النهاية
                                         </label>
                                         <input type="date" name="end" value="<?php echo date('Y-m-d'); ?>"
                                             class="form-control" required>
@@ -132,6 +134,6 @@
 
         };
 
-        select2list(".select2", "{{ route('select2.getStatement') }}", "يرجى إدخال العميل");
+        select2list(".select2", "{{ route('select2.getStatementCode') }}", "يرجى إدخال العميل");
     </script>
 @endsection

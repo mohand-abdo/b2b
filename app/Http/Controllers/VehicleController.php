@@ -18,9 +18,9 @@ class VehicleController extends Controller
     public function index()
     {
         // $daily = Operation::where('type', 1)->get();
-        $daily = Operation::where('type', 1)->orderBy('created_at','desc')->take(5)->get();
+        $daily = Operation::where('type', 1)->orderBy('created_at', 'desc')->take(5)->get();
         $id = 1;
-        return view('Vehicle.index', compact( 'daily', 'id'));
+        return view('Vehicle.index', compact('daily', 'id'));
     }
 
     /**
@@ -41,230 +41,213 @@ class VehicleController extends Controller
      */
     public function store(Request $request)
     {
-       if($request->price_tow > 0 && !empty($request->account_tow)){
-            $daily =  new Operation;
+        if ($request->price_tow > 0 && !empty($request->account_tow)) {
+            $daily = new Operation();
             $daily->Dain = $request->account_one;
             $daily->Madin = $request->account_tow;
             $daily->price = $request->price_tow;
             $daily->date = $request->date;
             $daily->Statement = $request->Statement;
-            $daily->Constraint_number =$request->Constraint_number;
+            $daily->Constraint_number = $request->Constraint_number;
             $daily->type = 1;
             $daily->user_id = Auth::user()->id;
-            $daily->save(); 
+            $daily->save();
 
-           
-            $daily =  new Restrictions;
+            $daily = new Restrictions();
             $op_id_one = Operation::latest()->first()->id;
             $daily->tree4_code = $request->account_one;
             $daily->Dain = $request->price_tow;
             $daily->Madin = 0;
             $daily->date = $request->date;
             $daily->Statement = $request->Statement;
-            $daily->op_id =  $op_id_one;
-            $daily->Constraint_number =$request->Constraint_number;
+            $daily->op_id = $op_id_one;
+            $daily->Constraint_number = $request->Constraint_number;
             $daily->type = 1;
             $daily->user_id = Auth::user()->id;
             $daily->save();
 
-            
-            $daily =  new Restrictions;
+            $daily = new Restrictions();
             $op_id_one = Operation::latest()->first()->id;
             $daily->tree4_code = $request->account_tow;
             $daily->Dain = 0;
             $daily->Madin = $request->price_tow;
             $daily->date = $request->date;
             $daily->Statement = $request->Statement;
-             $daily->op_id =  $op_id_one;
-            $daily->Constraint_number =$request->Constraint_number;
+            $daily->op_id = $op_id_one;
+            $daily->Constraint_number = $request->Constraint_number;
             $daily->type = 1;
             $daily->user_id = Auth::user()->id;
             $daily->save();
-        }else{
-           
+        } else {
         }
         $all_id = Operation::latest()->first()->id;
         //three operations in the mult guood
-        if($request->price_three > 0 && !empty($request->account_three)){
-            $daily =  new Operation;
+        if ($request->price_three > 0 && !empty($request->account_three)) {
+            $daily = new Operation();
             $daily->Dain = $request->account_one;
             $daily->Madin = $request->account_three;
             $daily->price = $request->price_three;
             $daily->date = $request->date;
             $daily->Statement = $request->Statement;
-            $daily->Constraint_number =$request->Constraint_number;
+            $daily->Constraint_number = $request->Constraint_number;
             $daily->type = 1;
             $daily->user_id = Auth::user()->id;
-            $daily->save(); 
+            $daily->save();
 
-            
-            $daily =  new Restrictions;
+            $daily = new Restrictions();
             // $op_id_tow = Operation::latest()->first()->id;
             $daily->tree4_code = $request->account_one;
             $daily->Dain = $request->price_three;
             $daily->Madin = 0;
             $daily->date = $request->date;
             $daily->Statement = $request->Statement;
-            $daily->op_id =  $all_id +1;
-            $daily->Constraint_number =$request->Constraint_number;
+            $daily->op_id = $all_id + 1;
+            $daily->Constraint_number = $request->Constraint_number;
             $daily->type = 1;
             $daily->user_id = Auth::user()->id;
             $daily->save();
 
-           
-            $daily =  new Restrictions;
+            $daily = new Restrictions();
             // $op_id_tow = Operation::latest()->first()->id;
             $daily->tree4_code = $request->account_three;
             $daily->Dain = 0;
             $daily->Madin = $request->price_three;
             $daily->date = $request->date;
             $daily->Statement = $request->Statement;
-             $daily->op_id =  $all_id +1;
-            $daily->Constraint_number =$request->Constraint_number;
+            $daily->op_id = $all_id + 1;
+            $daily->Constraint_number = $request->Constraint_number;
             $daily->type = 1;
             $daily->user_id = Auth::user()->id;
             $daily->save();
-        }else{
-          
+        } else {
         }
 
-       // four operation in the mult gouuud 
-       if($request->price_four > 0 && !empty($request->account_four)){
-        $daily =  new Operation;
-        $daily->Dain = $request->account_one;
-        $daily->Madin = $request->account_four;
-        $daily->price = $request->price_four;
-        $daily->date = $request->date;
-        $daily->Statement = $request->Statement;
-        $daily->Constraint_number =$request->Constraint_number;
-        $daily->type = 1;
-        $daily->user_id = Auth::user()->id;
-        $daily->save(); 
+        // four operation in the mult gouuud
+        if ($request->price_four > 0 && !empty($request->account_four)) {
+            $daily = new Operation();
+            $daily->Dain = $request->account_one;
+            $daily->Madin = $request->account_four;
+            $daily->price = $request->price_four;
+            $daily->date = $request->date;
+            $daily->Statement = $request->Statement;
+            $daily->Constraint_number = $request->Constraint_number;
+            $daily->type = 1;
+            $daily->user_id = Auth::user()->id;
+            $daily->save();
 
-       
-        $daily =  new Restrictions;
-        // $op_id_three = Operation::latest()->first()->id;
-        $daily->tree4_code = $request->account_one;
-        $daily->Dain = $request->price_four;
-        $daily->Madin = 0;
-        $daily->date = $request->date;
-        $daily->Statement = $request->Statement;
-        $daily->op_id =  $all_id +2;
-        $daily->Constraint_number =$request->Constraint_number;
-        $daily->type = 1;
-        $daily->user_id = Auth::user()->id;
-        $daily->save();
+            $daily = new Restrictions();
+            // $op_id_three = Operation::latest()->first()->id;
+            $daily->tree4_code = $request->account_one;
+            $daily->Dain = $request->price_four;
+            $daily->Madin = 0;
+            $daily->date = $request->date;
+            $daily->Statement = $request->Statement;
+            $daily->op_id = $all_id + 2;
+            $daily->Constraint_number = $request->Constraint_number;
+            $daily->type = 1;
+            $daily->user_id = Auth::user()->id;
+            $daily->save();
 
-        
-        $daily =  new Restrictions;
-        // $op_id_three = Operation::latest()->first()->id;
-        $daily->tree4_code = $request->account_four;
-        $daily->Dain = 0;
-        $daily->Madin = $request->price_four;
-        $daily->date = $request->date;
-        $daily->Statement = $request->Statement;
-         $daily->op_id =   $all_id +2;
-        $daily->Constraint_number =$request->Constraint_number;
-        $daily->type = 1;
-        $daily->user_id = Auth::user()->id;
-        $daily->save();
-    }else{
-      
-    }
-    
-    //five operations in the mult gouuud 
-    if($request->price_five > 0 && !empty($request->account_five)){
-        $daily =  new Operation;
-        $daily->Dain = $request->account_one;
-        $daily->Madin = $request->account_five;
-        $daily->price = $request->price_five;
-        $daily->date = $request->date;
-        $daily->Statement = $request->Statement;
-        $daily->Constraint_number =$request->Constraint_number;
-        $daily->type = 1;
-        $daily->user_id = Auth::user()->id;
-        $daily->save(); 
+            $daily = new Restrictions();
+            // $op_id_three = Operation::latest()->first()->id;
+            $daily->tree4_code = $request->account_four;
+            $daily->Dain = 0;
+            $daily->Madin = $request->price_four;
+            $daily->date = $request->date;
+            $daily->Statement = $request->Statement;
+            $daily->op_id = $all_id + 2;
+            $daily->Constraint_number = $request->Constraint_number;
+            $daily->type = 1;
+            $daily->user_id = Auth::user()->id;
+            $daily->save();
+        } else {
+        }
 
-        
-        $daily =  new Restrictions;
-        // $op_id_four = Operation::latest()->first()->id;
-        $daily->tree4_code = $request->account_one;
-        $daily->Dain = $request->price_five;
-        $daily->Madin = 0;
-        $daily->date = $request->date;
-        $daily->Statement = $request->Statement;
-        $daily->op_id =   $all_id +3;
-        $daily->Constraint_number =$request->Constraint_number;
-        $daily->type = 1;
-        $daily->user_id = Auth::user()->id;
-        $daily->save();
+        //five operations in the mult gouuud
+        if ($request->price_five > 0 && !empty($request->account_five)) {
+            $daily = new Operation();
+            $daily->Dain = $request->account_one;
+            $daily->Madin = $request->account_five;
+            $daily->price = $request->price_five;
+            $daily->date = $request->date;
+            $daily->Statement = $request->Statement;
+            $daily->Constraint_number = $request->Constraint_number;
+            $daily->type = 1;
+            $daily->user_id = Auth::user()->id;
+            $daily->save();
 
-       
-        $daily =  new Restrictions;
-        // $op_id_four = Operation::latest()->first()->id;
-        $daily->tree4_code = $request->account_five;
-        $daily->Dain = 0;
-        $daily->Madin = $request->price_five;
-        $daily->date = $request->date;
-        $daily->Statement = $request->Statement;
-         $daily->op_id =   $all_id +3;
-        $daily->Constraint_number =$request->Constraint_number;
-        $daily->type = 1;
-        $daily->user_id = Auth::user()->id;
-        $daily->save();
-    }else{
+            $daily = new Restrictions();
+            // $op_id_four = Operation::latest()->first()->id;
+            $daily->tree4_code = $request->account_one;
+            $daily->Dain = $request->price_five;
+            $daily->Madin = 0;
+            $daily->date = $request->date;
+            $daily->Statement = $request->Statement;
+            $daily->op_id = $all_id + 3;
+            $daily->Constraint_number = $request->Constraint_number;
+            $daily->type = 1;
+            $daily->user_id = Auth::user()->id;
+            $daily->save();
 
-    }
+            $daily = new Restrictions();
+            // $op_id_four = Operation::latest()->first()->id;
+            $daily->tree4_code = $request->account_five;
+            $daily->Dain = 0;
+            $daily->Madin = $request->price_five;
+            $daily->date = $request->date;
+            $daily->Statement = $request->Statement;
+            $daily->op_id = $all_id + 3;
+            $daily->Constraint_number = $request->Constraint_number;
+            $daily->type = 1;
+            $daily->user_id = Auth::user()->id;
+            $daily->save();
+        } else {
+        }
 
-    //six operations in mult gouuuod 
-    if($request->price_six > 0 && !empty($request->account_six)){
-        $daily =  new Operation;
-        $daily->Dain = $request->account_one;
-        $daily->Madin = $request->account_six;
-        $daily->price = $request->price_six;
-        $daily->date = $request->date;
-        $daily->Statement = $request->Statement;
-        $daily->Constraint_number =$request->Constraint_number;
-        $daily->type = 1;
-        $daily->user_id = Auth::user()->id;
-        $daily->save(); 
+        //six operations in mult gouuuod
+        if ($request->price_six > 0 && !empty($request->account_six)) {
+            $daily = new Operation();
+            $daily->Dain = $request->account_one;
+            $daily->Madin = $request->account_six;
+            $daily->price = $request->price_six;
+            $daily->date = $request->date;
+            $daily->Statement = $request->Statement;
+            $daily->Constraint_number = $request->Constraint_number;
+            $daily->type = 1;
+            $daily->user_id = Auth::user()->id;
+            $daily->save();
 
-        
-        $daily =  new Restrictions;
-        // $op_id_five = Operation::latest()->first()->id;
-        $daily->tree4_code = $request->account_one;
-        $daily->Dain = $request->price_six;
-        $daily->Madin = 0;
-        $daily->date = $request->date;
-        $daily->Statement = $request->Statement;
-        $daily->op_id =   $all_id + 4;
-        $daily->Constraint_number =$request->Constraint_number;
-        $daily->type = 1;
-        $daily->user_id = Auth::user()->id;
-        $daily->save();
+            $daily = new Restrictions();
+            // $op_id_five = Operation::latest()->first()->id;
+            $daily->tree4_code = $request->account_one;
+            $daily->Dain = $request->price_six;
+            $daily->Madin = 0;
+            $daily->date = $request->date;
+            $daily->Statement = $request->Statement;
+            $daily->op_id = $all_id + 4;
+            $daily->Constraint_number = $request->Constraint_number;
+            $daily->type = 1;
+            $daily->user_id = Auth::user()->id;
+            $daily->save();
 
-        
-        $daily =  new Restrictions;
-        // $op_id_five = Operation::latest()->first()->id;
-        $daily->tree4_code = $request->account_six;
-        $daily->Dain = 0;
-        $daily->Madin = $request->price_six;
-        $daily->date = $request->date;
-        $daily->Statement = $request->Statement;
-         $daily->op_id =   $all_id + 4;
-        $daily->Constraint_number =$request->Constraint_number;
-        $daily->type = 1;
-        $daily->user_id = Auth::user()->id;
-        $daily->save();
-    }else{
-       
-    }
+            $daily = new Restrictions();
+            // $op_id_five = Operation::latest()->first()->id;
+            $daily->tree4_code = $request->account_six;
+            $daily->Dain = 0;
+            $daily->Madin = $request->price_six;
+            $daily->date = $request->date;
+            $daily->Statement = $request->Statement;
+            $daily->op_id = $all_id + 4;
+            $daily->Constraint_number = $request->Constraint_number;
+            $daily->type = 1;
+            $daily->user_id = Auth::user()->id;
+            $daily->save();
+        } else {
+        }
 
-       
         Session()->flash('success');
 
         return redirect()->route('Vehicle.index');
-  
     }
 
     /**
@@ -329,7 +312,6 @@ class VehicleController extends Controller
                 $query->where('tree4_name', 'like', '%' . $search . '%');
             }
 
-
             // استثناء الحساب المختار في "من حساب" إذا وجد
             if (!empty($exclude)) {
                 $query->where('id', '!=', $exclude);
@@ -342,6 +324,43 @@ class VehicleController extends Controller
             $formattedResults = $tree4->map(function ($item) {
                 return [
                     'id' => $item->id,
+                    'text' => $item->tree4_name, // الحقل الذي سيظهر في Select2
+                ];
+            });
+
+            return response()->json($formattedResults);
+        }
+    }
+
+    public function getVehicleCode(Request $request)
+    {
+        $search = $request->get('q'); // النص المدخل من المستخدم
+        $exclude = $request->get('exclude', null);
+
+        // بدء الاستعلام الأساسي
+        if ($search != null) {
+            $query = Tree4::query();
+
+            // الشرط الأساسي للحالة العامة
+            $query->where('status', '=', '1');
+
+            // البحث بالنص المدخل
+            if (!empty($search)) {
+                $query->where('tree4_name', 'like', '%' . $search . '%');
+            }
+
+            // استثناء الحساب المختار في "من حساب" إذا وجد
+            if (!empty($exclude)) {
+                $query->where('tree4_code', '!=', $exclude);
+            }
+
+            // تنفيذ الاستعلام وجلب النتائج
+            $tree4 = $query->get();
+
+            // تنسيق النتائج لـ Select2
+            $formattedResults = $tree4->map(function ($item) {
+                return [
+                    'id' => $item->tree4_code,
                     'text' => $item->tree4_name, // الحقل الذي سيظهر في Select2
                 ];
             });

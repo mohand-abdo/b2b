@@ -11,26 +11,25 @@ class Operation extends Model
 {
     use HasFactory;
 
-     //  دائن
-     public function Dains(): BelongsTo
-     {
-         return $this->belongsTo(Tree4::class, 'Dain', 'id');
-     }
-    // مدين
-    public function Madins(): BelongsTo 
+    //  دائن
+    public function Dains(): BelongsTo
     {
-        return $this->belongsTo(Tree4::class, 'Madin', 'id');
+        return $this->belongsTo(Tree4::class, 'Dain', 'tree4_code');
+    }
+    // مدين
+    public function Madins(): BelongsTo
+    {
+        return $this->belongsTo(Tree4::class, 'Madin', 'tree4_code');
     }
 
-    public function plus(): BelongsTo 
+    public function plus(): BelongsTo
     {
         return $this->belongsTo(Plus::class);
     }
 
     // المستخدمين
-    public function user(): BelongsTo 
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
-  
 }
