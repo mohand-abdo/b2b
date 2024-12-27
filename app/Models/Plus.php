@@ -37,7 +37,7 @@ class Plus extends Model
     }
     public function Campaign()
     {
-        return $this->belongsTo(Campaigns::class, 'campaign_id', 'id');
+        return $this->belongsTo(Campaigns::class);
     }
 
 }

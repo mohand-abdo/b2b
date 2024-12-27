@@ -54,6 +54,16 @@
                             }
                         </script>
                     @endif
+                    @if (session()->has('error'))
+                        <script>
+                            window.onload = function() {
+                                notif({
+                                    msg: "هذا الحاج او المعتمر غير موجود في هذه الحملة يجب عليك ادخاله الى هذه الحملة",
+                                    type: "error"
+                                })
+                            }
+                        </script>
+                    @endif
                     @if (session()->has('edit'))
                         <script>
                             window.onload = function() {

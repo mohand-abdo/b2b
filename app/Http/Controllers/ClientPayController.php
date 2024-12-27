@@ -8,10 +8,12 @@ use App\Models\Tree4;
 use App\Models\Operation;
 use App\Models\Notification;
 use App\Models\Restrictions;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use NumberToWords\NumberToWords;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
 class ClientPayController extends Controller
 {
@@ -53,8 +55,20 @@ class ClientPayController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request): View|RedirectResponse
     {
+        $Madin = $request->Madin;
+        $Dain = $request->Dain;
+        $check = Plus::where('campaign_id', $request->campaign)
+            ->where(function ($query) use ($Madin, $Dain) {
+                $query
+                    ->where('tree4_code', $Madin) // المدين يساوي القيمة
+                    ->orWhere('tree4_code', $Dain); // أو الدائن يساوي القيمة
+            })
+            ->exists();
+        if (!$check) {
+            return back()->with('error', 'هناك خطأ ما!');
+        }
         $this->validate($request, [
             'Madin' => 'required',
             'Dain' => 'required',
@@ -186,7 +200,7 @@ class ClientPayController extends Controller
             $query = Tree4::query();
 
             // الشرط الأساسي للحالة العامة
-            $query->where('status', '=', '1')->where(function ($q) {
+            $query->where('status', '1')->where(function ($q) {
                 $q->whereIn('tree3_code', ['1202', '1203']);
             });
 
@@ -247,13 +261,13 @@ class ClientPayController extends Controller
             $query = Tree4::query();
 
             // الشرط الأساسي للحالة العامة
-            $query->where('status', '=', '1')->where(function ($q) {
+            $query->where('status', '1')->where(function ($q) {
                 $q->whereIn('tree3_code', ['1202', '1203']);
             });
 
             // استثناء الحساب المختار في "من حساب" إذا وجد
             if (!empty($exclude)) {
-                $query->where('id', '!=', $exclude);
+                $query->where('tree4_code', '!=', $exclude);
             }
 
             // البحث بالنص المدخل
@@ -266,12 +280,15 @@ class ClientPayController extends Controller
                 if (Auth::user()->roles_name == 'owner') {
                     // جلب السجلات التي تحتوي على الكود 1205 فقط عند التطابق مع نص البحث
                     $query->orWhere(function ($q) use ($search) {
-                        $q->where('tree3_code', '1205')->where('tree4_name', 'like', '%' . $search . '%');
+                        $q->where('status', '1')
+                            ->where('tree3_code', '1205')
+                            ->where('tree4_name', 'like', '%' . $search . '%');
                     });
                 } elseif (Auth::user()->roles_name == 'agent') {
                     // إضافة شرط user_id عند البحث بالكود 1205 للوكيل
                     $query->orWhere(function ($q) use ($search) {
-                        $q->where('tree3_code', '1205')
+                        $q->where('status', '1')
+                            ->where('tree3_code', '1205')
                             ->where('tree4_name', 'like', '%' . $search . '%')
                             ->where('user_id', Auth::id());
                     });
@@ -280,7 +297,7 @@ class ClientPayController extends Controller
 
             // استثناء الحساب المختار في "من حساب" إذا وجد
             if (!empty($exclude)) {
-                $query->where('id', '!=', $exclude);
+                $query->where('tree4_code', '!=', $exclude);
             }
 
             // تنفيذ الاستعلام وجلب النتائج

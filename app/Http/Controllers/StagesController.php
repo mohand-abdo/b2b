@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Stages;
 use App\Models\Campaigns;
 use App\Models\Operation;
+use App\Models\Plus;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -103,13 +104,12 @@ class StagesController extends Controller
             ->whereDate('created_at', '>=', $request->start)
             ->whereDate('created_at', '<=', $request->end)
             ->orderBy('id', 'DESC')
-            ->where('Madin', '1205%');
+            ->where('Madin', 'like', '1205%');
         if (Auth::user()->roles_name == 'owner') {
             $Madin = $Madin->get();
         } elseif (Auth::user()->roles_name == 'agent') {
             $Madin = $Madin->where('user_id', Auth::id())->get();
         }
-
         $Dain = Operation::with('plus')
             ->whereHas(
                 'plus',
@@ -135,10 +135,10 @@ class StagesController extends Controller
         $search = $request->get('q');
         if ($search != null) {
             $campaigns = Campaigns::where('status', 1);
-            if($search != null) {
-                $campaigns = $campaigns->where('name', 'LIKE', '%'. $search. '%')->get();
+            if ($search != null) {
+                $campaigns = $campaigns->where('name', 'LIKE', '%' . $search . '%')->get();
             }
-                
+
             $formattedResults = $campaigns->map(function ($item) {
                 return [
                     'id' => $item->id,
@@ -148,5 +148,49 @@ class StagesController extends Controller
 
             return response()->json($formattedResults);
         }
+    }
+
+    public function transform(Request $request)
+    {
+        $request->validate(
+            [
+                'stage_id' => 'required|exists:stages,id',
+                'campaign_id' => 'required|exists:campaigns,id',
+            ],
+            [
+                'stage_id.required' => 'معرف المرحلة مطلوب.',
+                'stage_id.exists' => 'المرحلة المحددة غير موجودة.',
+                'campaign_id.required' => 'معرف الحملة مطلوب.',
+                'campaign_id.exists' => 'الحملة المحددة غير موجودة.',
+            ],
+        );
+        $stage_id = Stages::with('pluses')->find($request->stage_id);
+        $check = Stages::with('pluses')->where('campaign_id', $request->campaign_id);
+        if (Auth::user()->roles_name == 'owner') {
+            $exists = $check->exists();
+        } else {
+            $exists = $check->where('user_id', Auth::id())->exists();
+        }
+
+        if (!$exists) {
+            return redirect()->back()->with('error_stage', 'الحملة ليست  موجودة بالفعل.');
+        } elseif (Auth::user()->roles_name == 'owner') {
+            $stage = $check->first();
+        } elseif (Auth::user()->roles_name == 'agent') {
+            $stage = $check->where('user_id', Auth::id())->first();
+        }
+        if ($stage->pluses->isEmpty()) {
+            foreach ($stage_id->pluses as $plus) {
+                Plus::create(['stage_id' => $stage->id, 'campaign_id' => $request->campaign_id, 'tree4_code' => $plus->tree4_code, 'tree4_id' => $plus->tree4_id]);
+                foreach ($stage_id->pluses as $plus) {
+                    $plus->delete();
+                }
+            }
+        } else {
+            foreach ($stage->pluses as $plus) {
+                $plus->update(['stage_id' => $stage->id, 'campaign_id' => $request->campaign_id]);
+            }
+        }
+        return back()->with('success', 'تم تحويل المرحلة بنجاح.');
     }
 }

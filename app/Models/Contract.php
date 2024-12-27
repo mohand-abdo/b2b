@@ -27,7 +27,7 @@ class Contract extends Model
     
     public function tree4()
     {
-        return $this->belongsTo(Tree4::class);
+        return $this->belongsTo(Tree4::class,'tree4_code','tree4_code');
     }
     
 

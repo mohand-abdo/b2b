@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Plus;
 use App\Models\Stage;
+use App\Models\Stages;
 use App\Models\Tree4;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -12,7 +14,16 @@ class PlusController extends Controller
 {
     public function index()
     {
-        $pluses = Plus::with('stage')->get();
+        $pluses = Plus::with('stage');
+        if (Auth::user()->roles_name == 'owner') {
+            $pluses = $pluses->get();
+        } elseif (Auth::user()->roles_name == 'agent') {
+            $pluses = $pluses
+                ->whereHas('stage', function ($query) {
+                    $query->where('user_id', Auth::id());
+                })
+                ->get();
+        }
         // Assuming tree4 is coming from the stages
         return view('plus.index', compact('pluses'));
     }

@@ -23,8 +23,8 @@ return new class extends Migration
             $table->decimal('total_amount', 10, 2); // المبلغ شامل الضريبة
             $table->date('contract_date'); // تاريخ العقد
             $table->text('contract_terms')->nullable(); // شروط العقد
-            $table->foreignId('tree4_id')->constrained()->cascadeOnDelete();
-            $table->unsignedBigInteger('tree4_code')->nullable(); // تعديل النوع ليتطابق مع `tree4_code`
+            $table->foreignId('tree4_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->unsignedBigInteger('tree4_code'); // تعديل النوع ليتطابق مع `tree4_code`
             $table->foreignId('campaign_id')->constrained()->cascadeOnDelete(); // حملة الحج والعمرة
             $table->unsignedBigInteger('bank_and_safe'); // الحساب
             // $table->unsignedBigInteger('user_id'); // المستخدم

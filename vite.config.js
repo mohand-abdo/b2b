@@ -25,6 +25,9 @@ export default defineConfig({
         alias: {
             vue: "vue/dist/vue.esm-bundler.js",
             jquery: "jquery/dist/jquery.js",
+            'ckeditor4': 'ckeditor4/ckeditor.js'
         },
     },
 });
+
+

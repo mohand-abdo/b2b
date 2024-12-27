@@ -74,7 +74,18 @@
                             window.onload = function() {
                                 notif({
                                     msg: "المرحلة موجودة بالفعل لهذه الحملة.",
-                                    type: "warning"
+                                    type: "error"
+                                })
+                            }
+                        </script>
+                    @endif
+
+                    @if (session()->has('error_stage'))
+                        <script>
+                            window.onload = function() {
+                                notif({
+                                    msg: "{{ session('error_stage') }}.",
+                                    type: "error"
                                 })
                             }
                         </script>
@@ -120,8 +131,8 @@
                                         <td>
                                             @can('إضافة حجاج للمرحلة')
                                                 <a href="{{ route('Plus.index', ['id' => $stage->id, 'campaign' => $stage->campaign_id]) }}"
-                                                    class="btn btn-outline-info btn-sm" title="عرض">
-                                                    <i class="fa fa-plus"></i>&nbsp;&nbsp;إضافة حجاج او معتمر للمرحلة
+                                                    class="btn btn-outline-info btn-sm" title="اضافة حاج او معتمر">
+                                                    <i class="fa fa-plus"></i>
                                                 </a>
                                             @endcan
                                             @can('تعديل مرحلة')
@@ -141,6 +152,11 @@
                                                     <i class="fa fa-trash">
                                                     </i></i></a>
                                             @endcan
+                                            <a class="modal-effect btn btn-outline-primary btn-sm" data-target="#modaldemo6"
+                                                data-toggle="modal" href="#modaldemo6" data-id="{{ $stage->id }}"
+                                                data-campaign_id="{{ $stage->campaign_id }}"
+                                                data-campaign_name="{{ $stage->campaign->name }}" title="تغيير الحملة">
+                                                <i class="fa fa-share-from-square"></i></a>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -150,90 +166,82 @@
                 </div>
             </div>
         </div>
-        <!--/div-->
-        <!-- Basic modal -->
-        <div class="modal" id="modaldemo8">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content modal-content-demo">
-                    <div class="modal-header">
-                        <h6 class="modal-title">إضافة مرحلة جديدة</h6>
-                        <button aria-label="Close" class="close" data-dismiss="modal" type="button">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+    </div>
+
+    <div class="modal" id="modaldemo8">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content modal-content-demo">
+                <div class="modal-header">
+                    <h6 class="modal-title">إضافة مرحلة جديدة</h6>
+                    <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="{{ route('Stages.store') }}" method="post" onsubmit="disableSubmitButton(this)">
+                    {{ csrf_field() }}
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <span class="tx-danger">*</span><label for="campaign_id_add">إسم الحملة</label>
+                                    <select name="campaign_id" id="campaign_id_add" class="campaign form-control"
+                                        style="width: 100%;" required></select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <span class="tx-danger">*</span><label for="stage">اسم المرحلة</label>
+                                    <input type="text" name="stage" id="stage" class="form-control" required>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <form action="{{ route('Stages.store') }}" method="post" onsubmit="disableSubmitButton(this)">
-                        {{ csrf_field() }}
-                        <div class="modal-body">
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="form-group">
-                                        <span class="tx-danger">*</span><label for="campaign_id_add">إسم الحملة</label>
-                                        <select name="campaign_id" id="campaign_id_add" class="campaign form-control"
-                                            style="width: 100%;" required></select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="form-group">
-                                        <span class="tx-danger">*</span><label for="stage">اسم المرحلة</label>
-                                        <input type="text" name="stage" id="stage" class="form-control"
-                                            required>
-                                    </div>
-                                </div>
-                            </div>
+                    <div class="modal-footer">
+                        <button class="btn ripple btn-primary" type="submit" id="submitBtn">إضافة</button>
+                        <button class="btn ripple btn-secondary" data-dismiss="modal" type="button">إغلاق</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="modaldemo7">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content modal-content-demo">
+                <div class="modal-header">
+                    <h6 class="modal-title">تعديل مرحلة</h6>
+                    <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="Stages/update" method="post">
+                    {{ method_field('put') }}
+                    {{ csrf_field() }}
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <span class="tx-danger">*</span><label for="campaign_id">اسم الحملة</label>
+                            <input id="id" required type="hidden" name="id" class="form-control">
+                            <select name="campaign_id" id="campaign_id" class="campaign form-control"
+                                style="width: 100%;" required></select>
+
+                        </div>
+                        <div class="form-group">
+                            <span class="tx-danger">*</span><label for="stage">اسم المرحلة</label>
+                            <input id="stage" required type="text" name="stage" class="form-control" required>
                         </div>
                         <div class="modal-footer">
-                            <button class="btn ripple btn-primary" type="submit" id="submitBtn">إضافة</button>
+                            <button class="btn ripple btn-primary" type="submit">تحديث البيانات</button>
                             <button class="btn ripple btn-secondary" data-dismiss="modal" type="button">إغلاق</button>
                         </div>
-                    </form>
-
-                </div>
-            </div>
-        </div>
-
-        <!-- End Basic modal -->
-        <div class="modal" id="modaldemo7">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content modal-content-demo">
-                    <div class="modal-header">
-                        <h6 class="modal-title">تعديل مرحلة</h6>
-                        <button aria-label="Close" class="close" data-dismiss="modal" type="button">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
                     </div>
-                    <form action="Stages/update" method="post">
-                        {{ method_field('put') }}
-                        {{ csrf_field() }}
-                        <div class="modal-body">
-                            <div class="form-group">
-                                <span class="tx-danger">*</span><label for="campaign_id">اسم الحملة</label>
-                                <input id="id" required type="hidden" name="id" class="form-control">
-                                <select name="campaign_id" id="campaign_id" class="campaign form-control"
-                                    style="width: 100%;" required></select>
-
-                            </div>
-                            <div class="form-group">
-                                <span class="tx-danger">*</span><label for="stage">اسم المرحلة</label>
-                                <input id="stage" required type="text" name="stage" class="form-control"
-                                    required>
-                            </div>
-                            <div class="modal-footer">
-                                <button class="btn ripple btn-primary" type="submit">تحديث البيانات</button>
-                                <button class="btn ripple btn-secondary" data-dismiss="modal"
-                                    type="button">إغلاق</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
+                </form>
             </div>
         </div>
     </div>
-    </div>
-    <!-- row closed -->
-    </div>
-    {{-- // modal delete alert    --}}
+
     <div class="modal" id="modaldemo5">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content tx-size-sm">
@@ -255,9 +263,40 @@
             </div>
         </div>
     </div>
-    <!-- Container closed -->
+
+    <div class="modal" id="modaldemo6">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content modal-content-demo">
+                <div class="modal-header">
+                    <h6 class="modal-title">تغيير المرحلة </h6>
+                    <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="{{ route('stage.transform') }}" method="post" onsubmit="disableSubmitButton(this)">
+                    {{ csrf_field() }}
+                    <div class="modal-body">
+                        <input type="hidden" name="stage_id" id="stage_id" />
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <span class="tx-danger">*</span><label for="campaign_id_add">إسم الحملة</label>
+                                    <select name="campaign_id" id="campaign_id_change" class="campaign form-control"
+                                        style="width: 100%;" required></select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn ripple btn-primary" type="submit" id="submitBtn">حفظ</button>
+                        <button class="btn ripple btn-secondary" data-dismiss="modal" type="button">إغلاق</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
     </div>
-    <!-- main-content closed -->
+
 @endsection
 @section('js')
     <!-- Internal Data tables -->
@@ -300,6 +339,18 @@
 
                 modal.find('.modal-body #id').val(id);
                 modal.find('.modal-body #stage').val(stage);
+                setSelect2Value('.campaign', campaign_id, name);
+
+            });
+
+            $('#modaldemo6').on('show.bs.modal', function(event) {
+                var button = $(event.relatedTarget);
+                var id = button.data('id');
+                var campaign_id = button.data('campaign_id');
+                var name = button.data('campaign_name');
+                var modal = $(this);
+
+                modal.find('.modal-body #stage_id').val(id);
                 setSelect2Value('.campaign', campaign_id, name);
 
             });

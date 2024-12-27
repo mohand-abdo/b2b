@@ -36,7 +36,7 @@
 
 <script>
     // العثور على جميع الحقول النصية التي تستخدم CKEditor وتطبيق التعطيل عليها
-    document.querySelectorAll('textarea').forEach(function(textarea) {
-        CKEDITOR.replace(textarea.id);
-    });
+    // document.querySelectorAll('textarea').forEach(function(textarea) {
+    //     CKEDITOR.replace(textarea.id);
+    // });
 </script>

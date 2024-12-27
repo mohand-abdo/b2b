@@ -47,13 +47,23 @@
             }
         </script>
     @endif
-      @if (session()->has('edit'))
+    @if (session()->has('edit'))
         <script>
             window.onload = function() {
                 notif({
                     msg: "تم تحديث البيانات بنجاح",
                     type: "success"
                 });
+            }
+        </script>
+    @endif
+    @if (session()->has('error'))
+        <script>
+            window.onload = function() {
+                notif({
+                    msg: "هذا الحاج او المعتمر غير موجود في هذه الحملة يجب عليك ادخاله الى هذه الحملة",
+                    type: "error"
+                })
             }
         </script>
     @endif
@@ -67,10 +77,10 @@
 
                         <!-- Row 1 -->
                         <div class="row">
-                        
+
                             <div class="col-md-4">
                                 <span class="tx-danger">*</span><label>الحاج او المعتمر</label>
-                                <select id="tree4_id" name="tree4_id" class="form-control tree4" required></select>
+                                <select id="tree4_code" name="tree4_code" class="form-control tree4" required></select>
                             </div>
 
                             <div class="col-md-4">
@@ -79,7 +89,8 @@
                             </div>
                             <div class="col-md-4">
                                 <span class="tx-danger">*</span><label> الحساب</label>
-                                <select id="live_bank_and_safe" required name="bank_and_safe" class="form-control nice-select">
+                                <select id="live_bank_and_safe" required name="bank_and_safe"
+                                    class="form-control nice-select">
                                     <option value=""> -- اختر الحساب --</option>
 
                                     @foreach ($tree4s as $tree)
@@ -146,7 +157,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <span class="tx-danger">*</span><label>شروط العقد</label>
-                                <textarea name="contract_terms" class="form-control" id="ckeditor" rows="3" required>{{Helper::GeneralSiteSettings('conditions')}}</textarea>
+                                <textarea name="contract_terms" class="form-control" id="ckeditor" rows="3" required>{{ Helper::GeneralSiteSettings('conditions') }}</textarea>
                             </div>
                         </div>
 
@@ -193,7 +204,15 @@
 
     <script>
         // Initialize CKEditor
-        CKEDITOR.replace('ckeditor');
+        CKEDITOR.replace('ckeditor', {
+            language: 'ar',
+            on: {
+                instanceReady: function(evt) {
+                    // إخفاء الرسائل التحذيرية
+                    CKEDITOR.document.getById('cke_').setStyle('display', 'none');
+                }
+            }
+        });
 
         // Calculate total amount including tax
         document.getElementById('amount').addEventListener('input', calculateTotal);
@@ -205,7 +224,7 @@
             var totalAmount = amount + (amount * tax / 100);
             document.getElementById('total_amount').value = totalAmount.toFixed(2);
         }
-    
+
         function select2list(selector, url, placeholder) {
             $(selector).select2({
                 language: {
@@ -241,7 +260,7 @@
 
         };
 
-        select2list(".tree4", "{{ route('select2.getStatement') }}", "يرجى إدخال الحاج او المعتمر");
+        select2list(".tree4", "{{ route('select2.getStatementCode') }}", "يرجى إدخال الحاج او المعتمر");
         select2list(".campaign", "{{ route('select2.getCampaign') }}", "يرجى إدخال الحملة");
     </script>
 @endsection

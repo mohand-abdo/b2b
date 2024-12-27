@@ -157,6 +157,10 @@ Route::group(['middleware' => ['auth', 'check.user']], function () {
     Route::get('get/vehicle', [App\Http\Controllers\VehicleController::class, 'getVehicle'])->name('select2.getVehicle');
     Route::get('get/vehicle/code', [App\Http\Controllers\VehicleController::class, 'getVehicleCode'])->name('select2.getVehicleCode');
     Route::get('get/book', [App\Http\Controllers\BooksController::class, 'getBook'])->name('select2.getBook');
+
+    // تحويل الحجاج او المعتمرين من حملة الى حملة
+    Route::post('transform/stage', [App\Http\Controllers\StagesController::class,'transform'])->name('stage.transform');
+    Route::post('transform/plus', [App\Http\Controllers\PlusController::class,'transform'])->name('plus.transform');
 });
 //////////////////////////////////////////////qrcode//////////////////////////////////////////
 

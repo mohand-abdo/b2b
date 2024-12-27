@@ -17,6 +17,17 @@ window.$ = window.jQuery = $;
 
 import "lightbox2/dist/js/lightbox.js";
 
+import "ckeditor4";
+window.CKEDITOR = CKEDITOR;
+
+import "@fortawesome/fontawesome-free/js/all.js";
+
+
+
+
+
+
+
 
 
 
