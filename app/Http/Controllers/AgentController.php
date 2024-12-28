@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
+use App\Mail\InfoAgentRegister;
 use Illuminate\Validation\Rule;
 use App\Mail\AgentAddClientEmail;
 use Spatie\Permission\Models\Role;
@@ -12,7 +13,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\RedirectResponse;
-
 
 class AgentController extends Controller
 {
@@ -49,25 +49,31 @@ class AgentController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $this->validate(request: $request, rules: [
-            'name' => 'required',
-            'email' => 'required|email|unique:users,email',
-            'phone_number' => 'required|numeric|unique:users,phone_number',
-            'password' => 'required|same:confirm-password',
-        ]);
-        $user = User::create(attributes: [
-            'name' => $request->name,
-            'email' => $request->email,
-            'phone_number' => $request->phone_number,
-            'Status' => $request->Status,
-            'roles_name' => 'agent',
-            'password' => Hash::make($request->password),
-        ]);
+        $this->validate(
+            request: $request,
+            rules: [
+                'name' => 'required',
+                'email' => 'required|email|unique:users,email',
+                'phone_number' => 'required|numeric|unique:users,phone_number',
+                'password' => 'required|same:confirm-password',
+            ],
+        );
+        $user = User::create(
+            attributes: [
+                'name' => $request->name,
+                'email' => $request->email,
+                'phone_number' => $request->phone_number,
+                'Status' => $request->Status,
+                'roles_name' => 'agent',
+                'password' => Hash::make($request->password),
+            ],
+        );
 
         $user->assignRole('agent');
 
-        Mail::to('mohand10959@gmail.com')->send(new AgentAddClientEmail($user,Auth::user()->name));
-
+        if ($user->roles_name == 'agent' && $user->email != '') {
+            Mail::to($user->email)->send(new InfoAgentRegister($user));
+        }
         return redirect()->route('agent.index')->with('success', 'تم حفظ الوكيل بنجاح');
     }
 
@@ -96,31 +102,35 @@ class AgentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-   
 
     public function update(Request $request, User $agent): RedirectResponse
     {
-        $this->validate(request: $request, rules: [
-            'name' => 'required',
-            'email' => [
-                'required',
-                'email',
-                Rule::unique('users', 'email')->ignore($agent->id, 'id'), // استثناء المستخدم الحالي حسب معرفه (id)
+        $this->validate(
+            request: $request,
+            rules: [
+                'name' => 'required',
+                'email' => [
+                    'required',
+                    'email',
+                    Rule::unique('users', 'email')->ignore($agent->id, 'id'), // استثناء المستخدم الحالي حسب معرفه (id)
+                ],
+                'phone_number' => [
+                    'required',
+                    'numeric',
+                    Rule::unique('users', 'phone_number')->ignore($agent->id, 'id'), // نفس المنطق لرقم الهاتف
+                ],
+                'password' => 'nullable|same:confirm-password', // كلمة المرور اختيارية مع التحقق من التطابق
             ],
-            'phone_number' => [
-                'required',
-                'numeric',
-                Rule::unique('users', 'phone_number')->ignore($agent->id, 'id'), // نفس المنطق لرقم الهاتف
-            ],
-            'password' => 'nullable|same:confirm-password', // كلمة المرور اختيارية مع التحقق من التطابق
-        ]);
+        );
 
-        $agent->update(attributes: [
-            'name' => $request->name,
-            'email' => $request->email,
-            'phone_number' => $request->phone_number,
-            'Status' => $request->Status, // لاحظ أن الحقل يكتب بأحرف صغيرة إذا كان اسم العمود كذلك
-        ]);
+        $agent->update(
+            attributes: [
+                'name' => $request->name,
+                'email' => $request->email,
+                'phone_number' => $request->phone_number,
+                'Status' => $request->Status, // لاحظ أن الحقل يكتب بأحرف صغيرة إذا كان اسم العمود كذلك
+            ],
+        );
 
         if ($request->filled('password')) {
             // التحقق مما إذا كانت كلمة المرور مملوءة فقط
@@ -136,7 +146,7 @@ class AgentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(User $agent):RedirectResponse
+    public function destroy(User $agent): RedirectResponse
     {
         $agent->delete();
         return redirect()->route('agent.index')->with('delete', 'تم حذف الوكيل بنجا��.');

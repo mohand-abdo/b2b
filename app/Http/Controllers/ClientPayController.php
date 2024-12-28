@@ -6,14 +6,15 @@ use App\Models\Plus;
 use App\Models\User;
 use App\Models\Tree4;
 use App\Models\Operation;
+use Illuminate\View\View;
+use Illuminate\Support\Str;
 use App\Models\Notification;
 use App\Models\Restrictions;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use NumberToWords\NumberToWords;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 
 class ClientPayController extends Controller
 {
@@ -66,7 +67,8 @@ class ClientPayController extends Controller
                     ->orWhere('tree4_code', $Dain); // أو الدائن يساوي القيمة
             })
             ->exists();
-        if (!$check) {
+            // dd($check);
+        if (!$check && (Str::startsWith($Madin, '1205') || Str::startsWith($Dain, '1205'))) {
             return back()->with('error', 'هناك خطأ ما!');
         }
         $this->validate($request, [

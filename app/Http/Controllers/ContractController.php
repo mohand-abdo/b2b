@@ -48,16 +48,6 @@ class ContractController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        // dd($request->all());
-        $tree_code = $request->tree4_code;
-        $check = Plus::where('campaign_id', $request->campaign_id)
-            ->where('tree4_code', $tree_code)
-            ->exists();
-        // dd($check);
-        if (!$check) {
-            return back()->with('error', 'هناك خطأ ما!');
-        }
-
         // Validation
         $validator = Validator::make($request->all(), [
             'tree4_code' => 'required|exists:tree4s,tree4_code',
@@ -76,6 +66,15 @@ class ContractController extends Controller
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $tree_code = $request->tree4_code;
+        $check = Plus::where('campaign_id', $request->campaign_id)
+            ->where('tree4_code', $tree_code)
+            ->exists();
+        // dd($check);
+        if (!$check) {
+            return back()->with('error', 'هناك خطأ ما!');
         }
 
         // Handle file upload

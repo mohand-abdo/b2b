@@ -160,7 +160,6 @@ Route::group(['middleware' => ['auth', 'check.user']], function () {
 
     // تحويل الحجاج او المعتمرين من حملة الى حملة
     Route::post('transform/stage', [App\Http\Controllers\StagesController::class,'transform'])->name('stage.transform');
-    Route::post('transform/plus', [App\Http\Controllers\PlusController::class,'transform'])->name('plus.transform');
 });
 //////////////////////////////////////////////qrcode//////////////////////////////////////////
 

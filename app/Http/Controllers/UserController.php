@@ -1,12 +1,17 @@
 <?php
 namespace App\Http\Controllers;
+use App\Mail\InfoAgentRegister;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Notification;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\View\View;
+
 class UserController extends Controller
 {
     /**
@@ -22,7 +27,7 @@ class UserController extends Controller
         $this->middleware('permission:تعديل مستخدم', ['only' => ['edit', 'update']]);
         $this->middleware('permission:حذف مستخدم', ['only' => ['destroy']]);
     }
-    public function index(Request $request)
+    public function index(Request $request):View
     {
         $data = User::orderBy('id', 'DESC')->paginate(5);
         if ($request->id !== null) {
@@ -37,7 +42,7 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create():View
     {
         $roles = Role::pluck('name', 'name')->all();
         return view('users.Add_user', compact('roles'));
@@ -48,11 +53,12 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $this->validate($request, [
             'name' => 'required',
             'email' => 'nullable|email|unique:users,email',
+            'phone_number' => 'nullable|numeric|unique:users,phone_number',
             'password' => 'required|same:confirm-password',
             'roles_name' => 'required',
         ]);
@@ -60,6 +66,9 @@ class UserController extends Controller
         $input['password'] = Hash::make($input['password']);
         $user = User::create($input);
         $user->assignRole($request->input('roles_name'));
+        if ($user->roles_name == 'agent' && $user->email != '') {
+            Mail::to($user->email)->send(new InfoAgentRegister($user)); 
+        }
         return redirect()->route('users.index')->with('success', 'تم حفظ المستخدم بنجاح');
     }
     /**
@@ -68,7 +77,7 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($id):View
     {
         $user = User::find($id);
         return view('users.show', compact('user'));
@@ -79,7 +88,7 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($id):View
     {
         $user = User::find($id);
         $roles = Role::pluck('name', 'name')->all();
@@ -98,6 +107,7 @@ class UserController extends Controller
         $this->validate($request, [
             'name' => 'required',
             'email' => 'nullable|email|unique:users,email,' . $id,
+            'phone_number' => 'required|numeric|unique:users,phone_number,' . $id,
             'password' => 'same:confirm-password',
             'roles' => 'required',
         ]);

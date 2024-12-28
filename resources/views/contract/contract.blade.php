@@ -37,6 +37,15 @@
 @endsection
 
 @section('content')
+    @if ($errors->any())
+        <div class="alert alert-outline-danger" role="alert">
+            <button aria-label="Close" class="close" data-dismiss="alert" type="button">
+                <span aria-hidden="true">&times;</span></button>
+            @foreach ($errors->all() as $error)
+                <strong>خطأ!</strong> {{ $error }}
+            @endforeach
+        </div>
+    @endif
     @if (session()->has('success'))
         <script>
             window.onload = function() {
