@@ -160,6 +160,9 @@ Route::group(['middleware' => ['auth', 'check.user']], function () {
 
     // تحويل الحجاج او المعتمرين من حملة الى حملة
     Route::post('transform/stage', [App\Http\Controllers\StagesController::class,'transform'])->name('stage.transform');
+    Route::get('trashed_users', [App\Http\Controllers\UserController::class,'trashed_users'])->name('users.trashed_users');
+    Route::post('users/restore', [App\Http\Controllers\UserController::class,'restore'])->name('users.restore');
+    Route::post('users/force_delete', [App\Http\Controllers\UserController::class,'force_delete'])->name('users.force_delete');
 });
 //////////////////////////////////////////////qrcode//////////////////////////////////////////
 

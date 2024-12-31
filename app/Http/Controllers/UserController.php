@@ -155,7 +155,7 @@ class UserController extends Controller
     public function password_reset(Request $request)
     {
         // التحقق من وجود user_id
-        $request->validate([
+        $this->validate(request: $request,rules: [
             'user_id' => 'required|exists:users,id',
         ]);
 
@@ -185,5 +185,33 @@ class UserController extends Controller
             ],
             404,
         );
+    }
+
+    public function trashed_users():View
+    {
+        $users = User::onlyTrashed()->get();
+        return view('users.trashed',compact('users'));
+    }
+
+    public function restore(Request $request):RedirectResponse
+    {
+        $this->validate(request: $request,rules: [
+            'restore_id' =>'required|exists:users,id',
+        ]);
+
+        $id = $request->restore_id;
+        User::withTrashed()->find( $id)->restore();
+        return redirect()->route('users.index')->with('success', 'تم استعادة المستخدم من القائمة المهملة');
+    }
+
+    public function force_delete(Request $request):RedirectResponse
+    {
+        $this->validate(request: $request,rules: [
+            'force_delete_id' =>'required|exists:users,id',
+        ]);
+
+        $id = $request->force_delete_id;
+        User::withTrashed()->find( $id)->forceDelete();
+        return redirect()->route('users.trashed_users')->with('success', 'تم حذف المستخدم نهائيا ');
     }
 }

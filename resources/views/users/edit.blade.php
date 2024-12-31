@@ -99,18 +99,6 @@
                                 {!! Form::select('roles', $roles, old('roles', $userRole), ['class' => 'form-control nice-select']) !!}
                             </div>
                         </div>
-                        <div class="parsley-input col-md-6 mg-t-20 mg-md-t-0">
-                            <div class="form-group">
-                                <span class="tx-danger">*</span><label> نوع المستخدم</label>
-                                <select class="form-control nice-select" name="type">
-                                    <option value="0" {{ old('type', $user->type) == 0 ? 'selected' : '' }}>مستخدم عادي
-                                    </option>
-                                    <option value="1" {{ old('type', $user->type) == 1 ? 'selected' : '' }}>مستخدم
-                                        متدرب
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
                     </div>
                     <div class="mg-t-30">
                         <button class="btn btn-main-primary pd-x-20" type="submit">تحديث</button>

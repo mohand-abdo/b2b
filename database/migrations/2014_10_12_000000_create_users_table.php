@@ -25,6 +25,7 @@ return new class extends Migration
             $table->tinyInteger('type')->default(1);    
             $table->string('pilgrims_id')->nullable();
             $table->rememberToken();
+            $table->SoftDeletes();
             $table->timestamps();
         });
     }

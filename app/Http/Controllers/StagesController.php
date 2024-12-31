@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Plus;
+use App\Models\Tree4;
 use App\Models\Stages;
 use App\Models\Campaigns;
 use App\Models\Operation;
-use App\Models\Plus;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\RedirectResponse;
+use App\Mail\StageCreated;
 
 class StagesController extends Controller
 {
@@ -40,11 +43,19 @@ class StagesController extends Controller
         if ($exists) {
             return redirect()->back()->with('error', 'المرحلة موجودة بالفعل لهذه الحملة.');
         }
-        Stages::create([
+        $stage = Stages::create([
             'campaign_id' => $request->campaign_id,
             'stage' => $request->stage,
             'user_id' => Auth::id(),
         ]);
+
+        $tree4 = Tree4::where('status', '1')->get();
+        foreach($tree4 as $tree)
+        {
+            if($tree->email != ''){
+                Mail::to($tree->email)->send(new StageCreated($stage, $tree));
+            }
+        }
         return redirect()->route('Stages.index')->with('success', 'تم إضافة المرحلة بنجاح');
     }
 

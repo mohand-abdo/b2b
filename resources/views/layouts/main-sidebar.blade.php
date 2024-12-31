@@ -245,6 +245,8 @@
                         @can('صلاحيات المستخدمين')
                             <li><a class="slide-item" href="{{ url('/' . ($page = 'roles')) }}">صلاحيات المستخدمين </a></li>
                         @endcan
+                            <li><a class="slide-item" href="{{ url('/' . ($page = 'trashed_users')) }}"> المستخدمين المؤرشفين </a></li>
+
                         @can('ادارة الوكلاء')
                             <li><a class="slide-item" href="{{ route('agent.index') }}">قائمة الوكلاء</a></li>
                         @endcan
