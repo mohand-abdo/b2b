@@ -14,10 +14,19 @@ class CreateAdminUserSeeder extends Seeder
     public function run()
     {
         // إنشاء المستخدم
+        $bayan = User::create([
+            'name' => 'شركة بيان',
+            'email' => 'admin@gmail.com',
+            'phone_number' => '0121496141',
+            'password' => bcrypt('12345678999'),
+            'roles_name' => 'owner',
+            'Status' => 'مفعل',
+        ]);
+
         $user = User::create([
             'name' => 'صديق الجالب',
             'email' => 'info@b2btravelsudan.com',
-            'phone_number' => '0121496141',
+            'phone_number' => '0111111111',
             'password' => bcrypt('123456789'),
             'roles_name' => 'owner',
             'Status' => 'مفعل',
@@ -31,7 +40,7 @@ class CreateAdminUserSeeder extends Seeder
         // جلب الصلاحيات
         $permissions_owner = Permission::whereNotIn('id', ['56', '57','58'])->pluck('id');
         $permissions_user = Permission::whereIn('id', ['56', '57','58'])->pluck('id');
-        $permissions_agent = Permission::whereIn('id', ['2','3','5','6','10','35','36','37','40','41','42','43','57'])->pluck('id');
+        $permissions_agent = Permission::whereIn('id', ['2','3','5','6','10','35','36','37','43','57','60'])->pluck('id');
 
         // مزامنة الصلاحيات مع الأدوار
         $owner_role->syncPermissions($permissions_owner);
@@ -40,5 +49,6 @@ class CreateAdminUserSeeder extends Seeder
 
         // تعيين الدور للمستخدم
         $user->assignRole('owner');
+        $bayan->assignRole('owner');
     }
 }

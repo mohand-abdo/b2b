@@ -24,7 +24,7 @@ Auth::routes();
 //Auth::routes(['register'=>false]);
 //  route auth
 
-Route::group(['middleware' => ['auth', 'check.user']], function () {
+Route::group(['middleware' => ['auth', 'check.user','check.user.delete']], function () {
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
     // الراوتات الخاصة بنظام العمرة

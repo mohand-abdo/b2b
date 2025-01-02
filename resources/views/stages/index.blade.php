@@ -109,11 +109,10 @@
                                     <th class="wd-20p border-bottom-0">إسم الحملة </th>
                                     <th class="wd-15p border-bottom-0"> اسم المرحلة </th>
                                     <th class="wd-10p border-bottom-0"> عدد الحجاج وا المعتمرين </th>
-                                    @if (Auth::user()->roles_name == 'owner')
-                                        <th class="wd-10p border-bottom-0">بواسطة</th>
-                                    @endif
                                     <th class="wd-15p border-bottom-0"> تاريخ الإضافة </th>
-                                    <th class="wd-25p border-bottom-0">العمليات </th>
+                                    @can('إضافة حجاج للمرحلة')
+                                        <th class="wd-25p border-bottom-0">العمليات </th>
+                                    @endcan
                                 </tr>
                             </thead>
                             <tbody>
@@ -123,41 +122,42 @@
                                         <td>{{ $stage->campaign->name }}</td>
                                         <td>{{ $stage->stage }}</td>
                                         <td>{{ \App\Models\Plus::where('stage_id', $stage->id)->count() }}</td>
-                                        @if (Auth::user()->roles_name == 'owner')
-                                            <td>{{ $stage->user_id == Auth::id() ? 'انت' : $stage->user->name }}</td>
-                                        @endif
                                         <!-- عرض عدد الحجاج في هذه المرحلة -->
                                         <td>{{ $stage->created_at }}</td>
-                                        <td>
-                                            @can('إضافة حجاج للمرحلة')
-                                                <a href="{{ route('Plus.index', ['id' => $stage->id, 'campaign' => $stage->campaign_id]) }}"
-                                                    class="btn btn-outline-info btn-sm" title="اضافة حاج او معتمر">
-                                                    <i class="fa fa-plus"></i>
-                                                </a>
-                                            @endcan
-                                            @can('تعديل مرحلة')
-                                                <a class="modal-effect btn btn-outline-success btn-sm"
-                                                    data-effect="effect-super-scaled" data-toggle="modal" href="#modaldemo7"
-                                                    data-id="{{ $stage->id }}" data-campaign_id="{{ $stage->campaign_id }}"
-                                                    data-stage="{{ $stage->stage }}"
-                                                    data-campaign_name="{{ $stage->campaign->name }}" title="تعديل">
-                                                    <i class="fa fa-edit">
-                                                    </i></i></a>
-                                            @endcan
-                                            @can('حذف مرحلة')
-                                                <a class="modal-effect btn btn-outline-danger btn-sm" data-target="#modaldemo5"
-                                                    data-toggle="modal" href="#modaldemo5" data-id="{{ $stage->id }}"
-                                                    data-campaign_id="{{ $stage->campaign_id }}"
-                                                    data-stage="{{ $stage->stage }}" title="حذف">
-                                                    <i class="fa fa-trash">
-                                                    </i></i></a>
-                                            @endcan
-                                            <a class="modal-effect btn btn-outline-primary btn-sm" data-target="#modaldemo6"
-                                                data-toggle="modal" href="#modaldemo6" data-id="{{ $stage->id }}"
-                                                data-campaign_id="{{ $stage->campaign_id }}"
-                                                data-campaign_name="{{ $stage->campaign->name }}" title="تغيير الحملة">
-                                                <i class="fa fa-share-from-square"></i></a>
-                                        </td>
+                                        @can('إضافة حجاج للمرحلة')
+                                            <td>
+                                                @can('إضافة حجاج للمرحلة')
+                                                    <a href="{{ route('Plus.index', ['id' => $stage->id, 'campaign' => $stage->campaign_id]) }}"
+                                                        class="btn btn-outline-info btn-sm" title="اضافة حاج او معتمر">
+                                                        <i class="fa fa-plus"></i>
+                                                    </a>
+                                                @endcan
+                                                @can('تعديل مرحلة')
+                                                    <a class="modal-effect btn btn-outline-success btn-sm"
+                                                        data-effect="effect-super-scaled" data-toggle="modal" href="#modaldemo7"
+                                                        data-id="{{ $stage->id }}" data-campaign_id="{{ $stage->campaign_id }}"
+                                                        data-stage="{{ $stage->stage }}"
+                                                        data-campaign_name="{{ $stage->campaign->name }}" title="تعديل">
+                                                        <i class="fa fa-edit">
+                                                        </i></i></a>
+                                                @endcan
+                                                @can('حذف مرحلة')
+                                                    <a class="modal-effect btn btn-outline-danger btn-sm" data-target="#modaldemo5"
+                                                        data-toggle="modal" href="#modaldemo5" data-id="{{ $stage->id }}"
+                                                        data-campaign_id="{{ $stage->campaign_id }}"
+                                                        data-stage="{{ $stage->stage }}" title="حذف">
+                                                        <i class="fa fa-trash">
+                                                        </i></i></a>
+                                                @endcan
+                                                @can('استعادة مستخدم')
+                                                    <a class="modal-effect btn btn-outline-primary btn-sm" data-target="#modaldemo6"
+                                                        data-toggle="modal" href="#modaldemo6" data-id="{{ $stage->id }}"
+                                                        data-campaign_id="{{ $stage->campaign_id }}"
+                                                        data-campaign_name="{{ $stage->campaign->name }}" title="تغيير الحملة">
+                                                        <i class="fa fa-share-from-square"></i></a>
+                                                @endcan
+                                            </td>
+                                        @endcan
                                     </tr>
                                 @endforeach
                             </tbody>

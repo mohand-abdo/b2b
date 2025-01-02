@@ -3,26 +3,34 @@
 namespace App\Http\Controllers;
 
 use App\Models\Plus;
+use App\Models\User;
 use App\Models\Tree4;
 use App\Models\Stages;
 use App\Models\Campaigns;
 use App\Models\Operation;
 use Illuminate\View\View;
+use App\Mail\StageCreated;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\RedirectResponse;
-use App\Mail\StageCreated;
 
 class StagesController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        if (Auth::user()->roles_name == 'owner') {
-            $stages = Stages::get();
-        } elseif (Auth::user()->roles_name == 'agent') {
-            $stages = Stages::where('user_id', Auth::id())->get();
+        $stages = Stages::get();
+        if ($request->id !== null) {
+            $notfiy = Notification::findOrFail($request->id);
+            $notfiy->read = true;
+            $notfiy->save();
         }
+        // if (Auth::user()->roles_name == 'owner') {
+        //     $stages = Stages::get();
+        // } elseif (Auth::user()->roles_name == 'agent') {
+        //     $stages = Stages::where('user_id', Auth::id())->get();
+        // }
 
         // $campaigns = Campaigns::where('status', 1)->get();
 
@@ -55,6 +63,18 @@ class StagesController extends Controller
             if($tree->email != ''){
                 Mail::to($tree->email)->send(new StageCreated($stage, $tree));
             }
+        }
+
+        $users = User::where('id','!=', Auth::id())->whereStatus('مفعل')->get();
+
+        foreach ($users as $user) {
+            Notification::create([
+                'title' => 'انشاء مرحلة جديدة',
+                'message' => 'بدات  مرحلة  '. $stage->stage  .' عليكم بإكمال متطلبات المرحلة ',
+                'url' => 'Stages.index',
+                'user_id' => $user->id,
+                'item_id' => $stage->id,
+            ]);
         }
         return redirect()->route('Stages.index')->with('success', 'تم إضافة المرحلة بنجاح');
     }

@@ -12,9 +12,9 @@ use Illuminate\Support\Facades\Auth;
 
 class PlusController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $pluses = Plus::with('stage');
+        $pluses = Plus::with('stage')->where('stage_id',$request->id);
         if (Auth::user()->roles_name == 'owner') {
             $pluses = $pluses->get();
         } elseif (Auth::user()->roles_name == 'agent') {

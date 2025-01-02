@@ -29,7 +29,7 @@ class UserController extends Controller
     }
     public function index(Request $request):View
     {
-        $data = User::orderBy('id', 'DESC')->paginate(5);
+        $data = User::where('id','!=',1)->orderBy('id', 'DESC')->get();
         if ($request->id !== null) {
             $notfiy = Notification::findOrFail($request->id);
             $notfiy->read = true;

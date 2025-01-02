@@ -7,7 +7,6 @@
     <link href="{{ URL::asset('assets/plugins/datatable/css/jquery.dataTables.min.css') }}" rel="stylesheet">
     <link href="{{ URL::asset('assets/plugins/datatable/css/responsive.dataTables.min.css') }}" rel="stylesheet">
     <link href="{{ URL::asset('assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet">
-    <link href="{{ URL::asset('assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet">
     <!--Internal   Notify -->
     <link href="{{ URL::asset('assets/plugins/notify/css/notifIt.css') }}" rel="stylesheet" />
 @endsection
@@ -184,8 +183,7 @@
         </div>
     </div>
     <!-- Container closed -->
-    <div class="modal fade" id="attachmentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
+    <div class="modal fade" id="attachmentModal">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -203,12 +201,7 @@
                         @elseif (Auth::user()->roles_name == 'agent')
                             <div class="form-group">
                                 <span class="tx-danger">*</span><label for="tree4_id">الحاج / المعتمر</label>
-                                <select name="tree4_id" class="form-control" required>
-                                    <option value="">-- اختر الحاج / المعتمر --</option>
-                                    @foreach ($tree4Id as $tree4)
-                                        <option value="{{ $tree4->id }}">{{ $tree4->tree4_name }}</option>
-                                    @endforeach
-                                </select>
+                                <select name="tree4_id" class="form-control select2" style="width: 100%" required></select> 
                             </div>
                         @endif
 
@@ -315,8 +308,6 @@
             var imageUrl = "{{ asset('image/file') }}/" + file;
             modal.find('.modal-body #imagePreview').attr('src', imageUrl); // تحديث مصدر الصورة
 
-
-
         });
 
         $('#modaldemo5').on('show.bs.modal', function(event) {
@@ -327,5 +318,42 @@
             modal.find('.modal-body #id').val(id);
 
         });
+
+        function select2list(selector, url, placeholder) {
+            $(selector).select2({
+                language: {
+                    inputTooShort: function() {
+                        return 'ادخل حرف واحد على الاقل';
+                    }
+                },
+                ajax: {
+                    url: url,
+                    dataType: 'json',
+                    delay: 100,
+                    data: function(params) {
+                        return {
+                            q: params.term,
+                            page: params.page
+                        };
+                    },
+                    processResults: function(data, params) {
+                        console.log(data);
+                        params.page = params.page || 1;
+                        return {
+                            results: data,
+                            pagination: {
+                                more: ((data.total_count) > (params.page * 20))
+                            }
+                        };
+                    },
+                    cache: true
+                },
+                placeholder: placeholder,
+                minimumInputLength: 1,
+            });
+
+        };
+
+        select2list(".select2", "{{ route('select2.getStatement') }}", "يرجى إدخال العميل");
     </script>
 @endsection
